@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
     StaffID: DataTypes.INTEGER,
     UserName: DataTypes.STRING,
     RestaurantID: DataTypes.INTEGER,
-    WorkingDay: DataTypes.DATE
+    WorkingDay: DataTypes.DATE,
+    StaffStatus: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'Staff',

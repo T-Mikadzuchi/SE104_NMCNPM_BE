@@ -20,8 +20,8 @@ module.exports = {
       Price: {
         type: Sequelize.INTEGER
       },
-      Amount: {
-        type: Sequelize.INTEGER
+      Available: {
+        type: Sequelize.BOOLEAN
       },
       Description: {
         type: Sequelize.STRING

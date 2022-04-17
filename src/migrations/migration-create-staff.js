@@ -17,6 +17,9 @@ module.exports = {
       WorkingDay: {
         type: Sequelize.DATE
       },
+      StaffStatus: {
+        type: Sequelize.BOOLEAN
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE
