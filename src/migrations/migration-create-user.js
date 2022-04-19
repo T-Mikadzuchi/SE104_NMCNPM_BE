@@ -10,6 +10,12 @@ module.exports = {
       PassWord: {
         type: Sequelize.STRING
       },
+      FirstName: {
+        type: Sequelize.STRING
+      },
+      LastName: {
+        type: Sequelize.STRING
+      },
       DOB: {
         type: Sequelize.DATE
       },
