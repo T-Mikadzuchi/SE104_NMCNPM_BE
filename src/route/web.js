@@ -1,4 +1,5 @@
 import express from "express";
+import { route } from "express/lib/application";
 import homeController from "../controllers/homeController";
 
 let router = express.Router();
