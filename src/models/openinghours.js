@@ -14,11 +14,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   OpeningHours.init({
-    OpenID: DataTypes.INTEGER,
-    FromHour: DataTypes.INTEGER,
-    FromMin: DataTypes.INTEGER,
-    ToHour: DataTypes.INTEGER,
-    ToMin: DataTypes.INTEGER
+    fromHour: DataTypes.INTEGER,
+    fromMin: DataTypes.INTEGER,
+    toHour: DataTypes.INTEGER,
+    toMin: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'OpeningHours',

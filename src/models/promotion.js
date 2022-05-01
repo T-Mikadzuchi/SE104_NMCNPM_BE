@@ -14,15 +14,14 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Promotion.init({
-    PromotionID: DataTypes.INTEGER,
-    PromotionName: DataTypes.STRING,
-    Begin: DataTypes.DATE,
-    End: DataTypes.DATE,
-    Banner: DataTypes.STRING,
-    Value: DataTypes.FLOAT
+    promotionName: DataTypes.STRING,
+    begin: DataTypes.DATE,
+    end: DataTypes.DATE,
+    banner: DataTypes.STRING,
+    value: DataTypes.FLOAT
   }, {
     sequelize,
-    modelName: 'Promotion',
+    modelName: 'Promotions',
   });
   return Promotion;
 };
