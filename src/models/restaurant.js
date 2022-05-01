@@ -14,13 +14,14 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Restaurant.init({
-    RestaurantID: DataTypes.INTEGER,
-    OpenID: DataTypes.INTEGER,
-    ResAddress: DataTypes.STRING,
-    ResStatus: DataTypes.BOOLEAN
+    openID: DataTypes.INTEGER,
+    resAddress: DataTypes.STRING,
+    resStatus: DataTypes.BOOLEAN,
+    longitude: DataTypes.FLOAT,
+    latitude: DataTypes.FLOAT
   }, {
     sequelize,
-    modelName: 'Restaurant',
+    modelName: 'Restaurants',
   });
   return Restaurant;
 };

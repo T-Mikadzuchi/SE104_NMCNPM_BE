@@ -14,20 +14,19 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Bill.init({
-    BillNumber: DataTypes.INTEGER,
-    UserName: DataTypes.STRING,
-    RestaurantID: DataTypes.INTEGER,
-    Date: DataTypes.DATE,
-    Total: DataTypes.INTEGER,
-    Ship: DataTypes.INTEGER,
-    Payment: DataTypes.INTEGER,
-    BillStatus: DataTypes.INTEGER,
-    DeliAddress: DataTypes.STRING,
-    DeliPhoneNumber: DataTypes.STRING,
-    Note: DataTypes.STRING
+    userID: DataTypes.INTEGER,
+    restaurantID: DataTypes.INTEGER,
+    date: DataTypes.DATE,
+    total: DataTypes.INTEGER,
+    ship: DataTypes.INTEGER,
+    payment: DataTypes.INTEGER,
+    billstatus: DataTypes.INTEGER,
+    deliAddress: DataTypes.STRING,
+    deliPhoneNumber: DataTypes.STRING,
+    note: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'Bill',
+    modelName: 'Bills',
   });
   return Bill;
 };

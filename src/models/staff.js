@@ -14,14 +14,13 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Staff.init({
-    StaffID: DataTypes.INTEGER,
-    UserName: DataTypes.STRING,
-    RestaurantID: DataTypes.INTEGER,
-    WorkingDay: DataTypes.DATE,
-    StaffStatus: DataTypes.BOOLEAN
+    userID: DataTypes.INTEGER,
+    restaurantID: DataTypes.INTEGER,
+    workingday: DataTypes.DATE,
+    staffStatus: DataTypes.BOOLEAN
   }, {
     sequelize,
-    modelName: 'Staff',
+    modelName: 'Staffs',
   });
   return Staff;
 };
