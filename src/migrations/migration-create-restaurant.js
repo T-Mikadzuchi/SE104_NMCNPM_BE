@@ -15,7 +15,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       resStatus: {
-        type: Sequelize.BOOLEAN
+        type: Sequelize.INTEGER
       },
       longitude: {
         type: Sequelize.FLOAT

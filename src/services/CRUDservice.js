@@ -4,9 +4,6 @@ var salt = bcrypt.genSaltSync(10);
 
 let createNewUser = async (data) => {
     let hashPasswordFromBcrypt = await hashUserPassword(data.password);
-    console.log('data from service')
-    console.log(data)
-    console.log(hashPasswordFromBcrypt)
     return new Promise(async (resolve, reject) => {
         try {
             let hashPasswordFromBcrypt = await hashUserPassword(data.password);
@@ -17,8 +14,8 @@ let createNewUser = async (data) => {
                 dob: data.dob,
                 phoneNumber: data.phoneNumber,
                 address: data.address,
-                gender: data.gender == 1 ? "female" : "male",
-                roleID: parseInt(data.roleID) + 1
+                gender: data.gender == 1 ? "female" : data.gender == 0 ? "male" : "other",
+                roleID: data.roleID
             })
             resolve('create new user succeeded')
         } catch (e) {
@@ -96,7 +93,9 @@ let deleteUserById = (userId) => {
                 where: {id: userId}
             })
             if (user) {
-                await user.destroy();
+                await db.Users.destroy({
+                    where: {id: userId}
+                })
             }
             resolve();
         }catch(e) {
