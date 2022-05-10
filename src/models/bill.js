@@ -16,12 +16,13 @@ module.exports = (sequelize, DataTypes) => {
   Bill.init({
     userID: DataTypes.INTEGER,
     restaurantID: DataTypes.INTEGER,
+    addressID: DataTypes.INTEGER,
+    dailyRpID: DataTypes.INTEGER,
     date: DataTypes.DATE,
     total: DataTypes.INTEGER,
     ship: DataTypes.INTEGER,
     payment: DataTypes.INTEGER,
     billstatus: DataTypes.INTEGER,
-    deliAddress: DataTypes.STRING,
     deliPhoneNumber: DataTypes.STRING,
     note: DataTypes.STRING
   }, {

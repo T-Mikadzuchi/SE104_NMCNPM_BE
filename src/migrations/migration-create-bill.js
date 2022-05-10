@@ -13,6 +13,12 @@ module.exports = {
       restaurantID: {
         type: Sequelize.INTEGER
       },
+      dailyRpID: {
+        type: Sequelize.INTEGER
+      },
+      addressID: {
+        type: Sequelize.INTEGER
+      },
       date: {
         type: Sequelize.DATE
       },
@@ -27,9 +33,6 @@ module.exports = {
       },
       billstatus: {
         type: Sequelize.INTEGER
-      },
-      deliAddress: {
-        type: Sequelize.STRING
       },
       deliPhoneNum: {
         type: Sequelize.STRING
