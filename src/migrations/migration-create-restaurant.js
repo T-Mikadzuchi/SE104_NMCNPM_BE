@@ -14,9 +14,6 @@ module.exports = {
       resAddress: {
         type: Sequelize.STRING
       },
-      resStatus: {
-        type: Sequelize.INTEGER
-      },
       longitude: {
         type: Sequelize.FLOAT
       },
