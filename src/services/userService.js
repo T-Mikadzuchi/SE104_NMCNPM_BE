@@ -75,8 +75,17 @@ let getAllUsers = (userId) => {
                 users = await db.Users.findOne({
                     where: { id: userId },
                     attributes: {
-                        exclude: ['password']
-                    }
+                        exclude: ['password'],
+                    },                          
+                    include: [
+                        {
+                            model: db.Allcodes,                            
+                            as: 'roleData',
+                            where: { type: 'roleID' }
+                        }
+                    ],
+                    raw: true, 
+                    nest: true       
                 })
             }
             resolve(users)
