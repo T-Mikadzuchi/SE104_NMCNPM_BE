@@ -1,5 +1,6 @@
 import db from "../models/index";
 import bcrypt from 'bcryptjs'
+import allcode from "../models/allcode";
 var salt = bcrypt.genSaltSync(10);
 
 let handleUserLogin = (email, password) => {
@@ -191,10 +192,26 @@ let updateUserData = (data) => {
         }
     })
 }
+
+let getAllcodeService = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let res = {};
+            let allcode = await db.Allcodes.findAll();
+            res.errCode = 0;
+            res.data = allcode;
+            resolve(res);
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 module.exports = {
     handleUserLogin: handleUserLogin,
     getAllUsers: getAllUsers,
     createNewUser: createNewUser,
     deleteUser: deleteUser,
-    updateUserData: updateUserData
+    updateUserData: updateUserData,
+    getAllcodeService: getAllcodeService
 }
