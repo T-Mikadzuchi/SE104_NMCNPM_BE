@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       Allcodes.hasMany(models.Items, { foreignKey: 'available', as: 'availableData' })
       Allcodes.hasMany(models.Items, { foreignKey: 'featured', as: 'featuredData' })
       Allcodes.hasMany(models.Bills, { foreignKey: 'payment', as: 'paymentData' })
-      Allcodes.hasMany(models.Users, { foreignKey: 'billstatus', as: 'billstatusData' })
+      Allcodes.hasMany(models.Bills, { foreignKey: 'billstatus', as: 'billstatusData' })
     }
   };
   Allcodes.init({
