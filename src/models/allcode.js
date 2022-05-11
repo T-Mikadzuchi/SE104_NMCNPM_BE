@@ -2,8 +2,10 @@
 const {
   Model
 } = require('sequelize');
+import Users from '../models/user';
+
 module.exports = (sequelize, DataTypes) => {
-  class Allcode extends Model {
+  class Allcodes extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -11,9 +13,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Allcodes.hasMany(models.Users, { foreignKey: 'roleID', as: 'roleData' })
+      Allcodes.hasMany(models.Staffs, { foreignKey: 'staffstatus', as: 'staffstatusData' })
+      Allcodes.hasMany(models.Items, { foreignKey: 'type', as: 'typeData' })
+      Allcodes.hasMany(models.Items, { foreignKey: 'available', as: 'availableData' })
+      Allcodes.hasMany(models.Items, { foreignKey: 'featured', as: 'featuredData' })
+      Allcodes.hasMany(models.Bills, { foreignKey: 'payment', as: 'paymentData' })
+      Allcodes.hasMany(models.Users, { foreignKey: 'billstatus', as: 'billstatusData' })
     }
   };
-  Allcode.init({
+  Allcodes.init({
     key: DataTypes.INTEGER,
     type: DataTypes.STRING,
     value: DataTypes.STRING
@@ -21,5 +30,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Allcodes',
   });
-  return Allcode;
+  
+  return Allcodes;
 };
