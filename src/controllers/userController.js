@@ -57,7 +57,6 @@ let handleEditUser = async (req, res) => {
     let message = await userService.updateUserData(data);
     return res.status(200).json(message);
 }
-
 let getAllcode = async (req, res) => {
     try {
         let data = await userService.getAllcodeService();
@@ -71,6 +70,12 @@ let getAllcode = async (req, res) => {
         })
     }
 }
+let handleChangePassword = async (req, res) => {
+    let data = req.body;
+    let message = await userService.changePassword(data);
+    return res.status(200).json(message);
+}
+
 module.exports = {
     handleLogin: handleLogin,
     handleGetAllUsers: handleGetAllUsers,
@@ -78,6 +83,6 @@ module.exports = {
     handleCreateNewUser: handleCreateNewUser,
     handleEditUser: handleEditUser,
     handleDeleteUser: handleDeleteUser,
-
-    getAllcode: getAllcode
+    getAllcode: getAllcode,
+    handleChangePassword: handleChangePassword,
 }
