@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       Bills.belongsTo(models.Allcodes, { foreignKey: 'billstatus', targetKey: 'key' , as: 'billstatusData' })
       Bills.belongsTo(models.Users);
       Bills.belongsTo(models.Restaurants);
-      Bills.belongsTo(models.Address);
+      Bills.belongsTo(models.Addresses);
       Bills.belongsTo(models.DailyReports);
       Bills.belongsToMany(models.Items, { through: 'BillDetails', foreignKey: 'billID' });
     }
