@@ -1,6 +1,7 @@
 import express from "express";
 import homeController from "../controllers/homeController";
 import userController from "../controllers/userController";
+import staffController from "../controllers/staffController";
 
 let router = express.Router();
 
@@ -20,6 +21,8 @@ let initWebRoutes = (app) => {
     router.put('/api/edit-user', userController.handleEditUser);
     router.delete('/api/delete-user', userController.handleDeleteUser);
     router.put('/api/change-password', userController.handleChangePassword);
+
+    router.post('/api/add-new-staff', staffController.handleAddNewStaff);
 
     router.get('/allcode', userController.getAllcode);
 
