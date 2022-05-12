@@ -23,7 +23,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     number: DataTypes.INTEGER,
-    noteItem: DataTypes.STRING,
     currentprice: DataTypes.INTEGER
   }, {
     sequelize,
