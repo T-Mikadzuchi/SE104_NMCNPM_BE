@@ -53,11 +53,10 @@ let addNewAddress = (data) => {
                 });
             }
             else {
-                let checkDefault = data.default;
-                if (checkDefault === 1) {
+                if (data.default == 1) {
                     await db.Addresses.update({
-                    default: 0,
-                    }, { where: { default: 1, userID: data.userID }})
+                        default: 0,
+                    }, { where: { userID: data.userID }})
                 } 
                 let newAddress = await db.Addresses.create({
                     userID: data.userID,
@@ -68,7 +67,7 @@ let addNewAddress = (data) => {
                     default: data.default
 
                 })
-                if (checkDefault === 1) {
+                if (data.default == 1) {
                     await db.Users.update({
                         address: newAddress.id,                                
                     }, { where: { id: data.userID }})
