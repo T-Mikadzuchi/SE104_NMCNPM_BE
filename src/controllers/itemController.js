@@ -17,7 +17,13 @@ let handleSearchItem = async(req, res) => {
         items
     });
 }
+let handleUpdateItem = async(req, res) => {
+    let data = req.body;
+    let message = await itemService.updateItem(data);
+    return res.status(200).json(message);
+}
 
 module.exports = {
     handleSearchItem: handleSearchItem,
+    handleUpdateItem: handleUpdateItem,
 }

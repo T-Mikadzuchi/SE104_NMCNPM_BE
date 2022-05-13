@@ -26,6 +26,7 @@ let initWebRoutes = (app) => {
     router.post('/api/add-new-staff', staffController.handleAddNewStaff);
 
     router.get('/api/search-item', itemController.handleSearchItem);
+    router.put('/api/update-item', itemController.handleUpdateItem);
 
     router.get('/allcode', userController.getAllcode);
 
