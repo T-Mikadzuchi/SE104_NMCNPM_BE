@@ -47,10 +47,26 @@ let addNewAddress = (data) => {
             //    default: 0,
             //}, { where: { default: 1, userID: data.id }})
             if (checkAddress) {
-                resolve({
-                    errCode: 1,
-                    errMessage: 'Existed!'
-                });
+                if (data.default == 1) {
+                    await db.Addresses.update({
+                        default: 0,
+                    }, { where: { userID: data.userID }})
+                    await db.Addresses.update({
+                        default: 1,
+                    }, { where: { id: checkAddress.id }})
+                    await db.Users.update({
+                        address: checkAddress.id,                                
+                    }, { where: { id: data.userID }})
+                    resolve({
+                        errCode: 1,
+                        errMessage: 'Existed! Data updated!'
+                    });
+                } else {
+                    resolve({
+                        errCode: 2,
+                        errMessage: 'Existed!'
+                    });
+                }                
             }
             else {
                 if (data.default == 1) {
