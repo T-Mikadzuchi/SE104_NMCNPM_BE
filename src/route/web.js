@@ -5,6 +5,7 @@ import staffController from "../controllers/staffController";
 import itemController from "../controllers/itemController";
 import billController from "../controllers/billController";
 import addressController from "../controllers/addressController";
+import restaurantController from "../controllers/restaurantController";
 
 let router = express.Router();
 
@@ -33,6 +34,8 @@ let initWebRoutes = (app) => {
 
     router.get('/api/get-address', addressController.handleGetAddress);
     router.post('/api/add-address', addressController.handleAddAddress);
+
+    router.get('/api/get-restaurant', restaurantController.handleGetRestaurant);
 
     router.post('/api/create-bill', billController.handleCreateBill);
 
