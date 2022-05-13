@@ -14,10 +14,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   BillDetails.init({
-    billID: DataTypes.INTEGER,
-    itemID: DataTypes.INTEGER,
+    billID: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    itemID: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     number: DataTypes.INTEGER,
-    noteItem: DataTypes.STRING,
     currentprice: DataTypes.INTEGER
   }, {
     sequelize,

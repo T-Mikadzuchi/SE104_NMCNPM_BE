@@ -16,9 +16,6 @@ module.exports = {
       number: {
         type: Sequelize.INTEGER
       },
-      noteItem: {
-        type: Sequelize.STRING
-      },
       currentprice: {
         type: Sequelize.INTEGER
       },

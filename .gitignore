@@ -3,4 +3,8 @@
 /.idea
 .idea/
 .env
+my_app_err.log
+your_app_error.log
+my_app_log.log
+your_app_name.log
 

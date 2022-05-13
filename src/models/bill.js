@@ -11,6 +11,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Bills.belongsTo(models.Allcodes, { foreignKey: 'payment', targetKey: 'key' , as: 'paymentData' })
+      Bills.belongsTo(models.Allcodes, { foreignKey: 'billstatus', targetKey: 'key' , as: 'billstatusData' })
+      Bills.belongsTo(models.Users);
+      Bills.belongsTo(models.Restaurants);
+      Bills.belongsTo(models.Addresses);
+      Bills.belongsTo(models.DailyReports);
+      Bills.belongsToMany(models.Items, { through: 'BillDetails', foreignKey: 'billID' });
     }
   };
   Bills.init({

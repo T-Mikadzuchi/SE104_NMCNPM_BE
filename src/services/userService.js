@@ -1,6 +1,6 @@
 import db from "../models/index";
 import bcrypt from 'bcryptjs'
-import allcode from "../models/allcode";
+
 var salt = bcrypt.genSaltSync(10);
 
 let handleUserLogin = (email, password) => {
@@ -42,7 +42,6 @@ let handleUserLogin = (email, password) => {
         }
     })
 }
-
 let checkUserEmail = (userEmail) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -59,7 +58,6 @@ let checkUserEmail = (userEmail) => {
         }
     })
 }
-
 let getAllUsers = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -75,8 +73,24 @@ let getAllUsers = (userId) => {
                 users = await db.Users.findOne({
                     where: { id: userId },
                     attributes: {
-                        exclude: ['password']
-                    }
+                        exclude: ['password'],
+                    },                          
+                    include: [
+                        {
+                            model: db.Allcodes,                            
+                            as: 'roleData',
+                            where: { type: 'roleID' }
+                        },
+                        {
+                            model: db.Addresses,
+                            where: {
+                                userID: userId,
+                                default: 1
+                            }
+                        }
+                    ],
+                    raw: true, 
+                    nest: true       
                 })
             }
             resolve(users)
@@ -85,6 +99,7 @@ let getAllUsers = (userId) => {
         }
     })
 }
+// signup function here
 let createNewUser = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -100,11 +115,10 @@ let createNewUser = (data) => {
                     email: data.email,
                     password: hashPasswordFromBcrypt,
                     name: data.name,
-                    dob: data.dob,
-                    phoneNumber: data.phoneNumber,
-                    address: data.address,
-                    gender: data.gender == 1 ? "female" : "male",
-                    roleID: data.roleID
+                    // dob: data.dob,
+                    // phoneNumber: data.phoneNumber,
+                    // gender: data.gender == 1 ? "female" : "male",
+                    roleID: 2
                 })
                 resolve({
                     errCode: 0,
@@ -164,19 +178,56 @@ let updateUserData = (data) => {
                 //raw: false
             })
             if (user) { 
-                // user.name = data.name;
-                // user.dob = data.dob;
-                // user.phoneNumber = data.phoneNumber;
-                // user.gender = data.gender;
-                // await user.save();
                 
+                let currentAddress = await db.Addresses.findOne({
+                    where: { userID: data.id, default: 1 }
+                })
                 await db.Users.update({
                     name: data.name,
-                    //dob: data.dob,
+                    dob: data.dob,
                     phoneNumber: data.phoneNumber,
                     gender: data.gender,
+                    avatar: data.avatar,
                 }, { where : {id: data.id}});
 
+                if (currentAddress.detail === data.detail && currentAddress.province === data.province
+                    && currentAddress.district === data.district && currentAddress.ward === data.ward)  {
+
+                    } else {
+                        let checkAddress = await db.Addresses.findOne({
+                            where: {
+                                userID: data.id,
+                                detail: data.detail,
+                                province: data.province,
+                                district: data.district,
+                                ward: data.ward
+                            }
+                        });
+                        await db.Addresses.update({
+                            default: 0,
+                        }, { where: { default: 1, userID: data.id }})
+                        if (checkAddress) {
+                            await db.Addresses.update({
+                                default: 1,                                
+                            }, { where: { id: checkAddress.id }})
+                            await db.Users.update({
+                                address: checkAddress.id,                                
+                            }, { where: { id: data.id }})
+                        }
+                        else {
+                            let newAddress = await db.Addresses.create({
+                                userID: data.id,
+                                detail: data.detail,
+                                province: data.province,
+                                district: data.district,
+                                ward: data.ward,
+                                default: 1
+                            })                            
+                            await db.Users.update({
+                                address: newAddress.id,                                
+                            }, { where: { id: data.id }})
+                        }
+                    }
                 resolve({
                     errCode: 0,
                     errMessage: 'Update user succeeded!'
@@ -187,12 +238,11 @@ let updateUserData = (data) => {
                     errMessage: "User's not found!"
                 });
             }
-        } catch (e) {
+        } catch (e) { 
             reject(e);
         }
     })
 }
-
 let getAllcodeService = () => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -206,6 +256,38 @@ let getAllcodeService = () => {
         }
     })
 }
+let changePassword = (data) => {
+    return new Promise(async(resolve, reject) => {
+        try {
+            if (!data.id) {
+                resolve({
+                    errCode: 2,
+                    errMessage: 'Missing required parameters'
+                })
+            }
+            let user = await db.Users.findOne({
+                where: {id: data.id}
+            })
+            if (user) { 
+                let hashPasswordFromBcrypt = await hashUserPassword(data.password);
+                await db.Users.update({
+                    password: hashPasswordFromBcrypt
+                }, { where : {id: data.id}});
+                resolve({
+                    errCode: 0,
+                    errMessage: 'Change password succeeded!'
+                });
+            } else {
+                resolve({
+                    errCode: 1,
+                    errMessage: "User's not found!"
+                });
+            }
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
 
 module.exports = {
     handleUserLogin: handleUserLogin,
@@ -213,5 +295,6 @@ module.exports = {
     createNewUser: createNewUser,
     deleteUser: deleteUser,
     updateUserData: updateUserData,
-    getAllcodeService: getAllcodeService
+    getAllcodeService: getAllcodeService,
+    changePassword: changePassword,
 }
