@@ -22,8 +22,26 @@ let handleUpdateItem = async(req, res) => {
     let message = await itemService.updateItem(data);
     return res.status(200).json(message);
 }
+let handleGetItem = async(req, res) => {
+    let id = req.query.id;
+    if (!id) {
+        return res.status(200).json({
+            errCode: 1,
+            errMessage: "Missing required parameters!",
+            items: []
+        });
+    }
+    let items = await itemService.getAllItem(id);
+    console.log(items);
+    return res.status(200).json({
+        errCode: 0,
+        errMessage: "OK",
+        items
+    });
+}
 
 module.exports = {
     handleSearchItem: handleSearchItem,
     handleUpdateItem: handleUpdateItem,
+    handleGetItem: handleGetItem,
 }

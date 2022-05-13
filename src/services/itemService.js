@@ -55,8 +55,67 @@ let updateItem = (data) => {
         }
     })
 }
+let getAllItem = (itemId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let items = '';
+            if (itemId === "ALL") {
+                items = await db.Items.findAll({
+                    include: [
+                        {
+                            model: db.Allcodes,                            
+                            as: 'typeData',
+                            where: { type: 'type' }
+                        },
+                        {
+                            model: db.Allcodes,                            
+                            as: 'availableData',
+                            where: { type: 'available' }
+                        },
+                        {
+                            model: db.Allcodes,                            
+                            as: 'featuredData',
+                            where: { type: 'featured' }
+                        },
+                    ],
+                    raw: true, 
+                    nest: true
+                })
+            } 
+            else if (itemId) {
+                items = await db.Items.findOne({
+                    where: { id: itemId },
+                                              
+                    include: [
+                        {
+                            model: db.Allcodes,                            
+                            as: 'typeData',
+                            where: { type: 'type' }
+                        },
+                        {
+                            model: db.Allcodes,                            
+                            as: 'availableData',
+                            where: { type: 'available' }
+                        },
+                        {
+                            model: db.Allcodes,                            
+                            as: 'featuredData',
+                            where: { type: 'featured' }
+                        },
+                    ],
+                    raw: true, 
+                    nest: true       
+                })
+            }
+            resolve(items)
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
 
 module.exports = {
     searchItem: searchItem,
-    updateItem: updateItem
+    updateItem: updateItem,
+    getAllItem: getAllItem
 }

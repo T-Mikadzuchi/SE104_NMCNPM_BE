@@ -28,6 +28,7 @@ let initWebRoutes = (app) => {
 
     router.get('/api/search-item', itemController.handleSearchItem);
     router.put('/api/update-item', itemController.handleUpdateItem);
+    router.get('/api/get-item', itemController.handleGetItem);
 
     router.post('/api/create-bill', billController.handleCreateBill);
 
