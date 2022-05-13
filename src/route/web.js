@@ -4,6 +4,7 @@ import userController from "../controllers/userController";
 import staffController from "../controllers/staffController";
 import itemController from "../controllers/itemController";
 import billController from "../controllers/billController";
+import addressController from "../controllers/addressController";
 
 let router = express.Router();
 
@@ -29,6 +30,8 @@ let initWebRoutes = (app) => {
     router.get('/api/search-item', itemController.handleSearchItem);
     router.put('/api/update-item', itemController.handleUpdateItem);
     router.get('/api/get-item', itemController.handleGetItem);
+
+    router.get('/api/get-address', addressController.handleGetAddress);
 
     router.post('/api/create-bill', billController.handleCreateBill);
 
