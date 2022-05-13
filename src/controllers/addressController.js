@@ -18,7 +18,14 @@ let handleGetAddress = async(req, res) => {
     });
 }
 
+let handleAddAddress = async(req, res) => {
+    let message = await addressService.addNewAddress(req.body);
+    console.log(message);
+    return res.status(200).json(message);
+}
+
+
 module.exports = {
-    handleGetAddress: handleGetAddress
-     
+    handleGetAddress: handleGetAddress,
+    handleAddAddress: handleAddAddress
 }
