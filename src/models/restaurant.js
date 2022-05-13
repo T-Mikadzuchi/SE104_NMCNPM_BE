@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Restaurants.hasMany(models.Staffs, { foreignKey: 'restaurantID' });
-      Restaurants.belongsTo(models.OpeningHours);
+      Restaurants.belongsTo(models.OpeningHours, { foreignKey: 'openID', targetKey: 'id', as: 'openData' });
       Restaurants.hasMany(models.Bills, { foreignKey: 'restaurantID'});
     }
   };
