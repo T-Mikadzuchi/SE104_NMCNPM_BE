@@ -9,8 +9,14 @@ let createBill = (data) => {
             let checkBillExist = await db.Bills.findOne({
                 where: {
                     userID: user.id,
+                    billstatus: 0
                 }
             })
+            if (checkBillExist) {
+                resolve()
+            } else {
+                
+            }
         } catch(e) {
             reject(e)
         }

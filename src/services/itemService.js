@@ -10,7 +10,26 @@ let searchItem = (itemSearch) => {
                     where: {
                         itemName: sequelize.where(sequelize.fn('LOWER', sequelize.col('itemName')),
                          'LIKE', '%' + itemSearch.toLowerCase() + '%')
-                    }
+                    },
+                    include: [
+                        {
+                            model: db.Allcodes,                            
+                            as: 'typeData',
+                            where: { type: 'type' }
+                        },
+                        {
+                            model: db.Allcodes,                            
+                            as: 'availableData',
+                            where: { type: 'available' }
+                        },
+                        {
+                            model: db.Allcodes,                            
+                            as: 'featuredData',
+                            where: { type: 'featured' }
+                        },
+                    ],
+                    raw: true, 
+                    nest: true
                 })
             }
             resolve(items)
