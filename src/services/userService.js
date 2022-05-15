@@ -195,9 +195,9 @@ let updateUserData = (data) => {
             })
             if (user) { 
                 
-                let currentAddress = await db.Addresses.findOne({
-                    where: { userID: data.id, default: 1 }
-                })
+                // let currentAddress = await db.Addresses.findOne({
+                //     where: { userID: data.id, default: 1 }
+                // })
                 await db.Users.update({
                     name: data.name,
                     dob: data.dob,
@@ -206,10 +206,10 @@ let updateUserData = (data) => {
                     avatar: data.avatar,
                 }, { where : {id: data.id}});
 
-                if (currentAddress.detail === data.detail && currentAddress.province === data.province
-                    && currentAddress.district === data.district && currentAddress.ward === data.ward)  {
+                // if (currentAddress.detail === data.detail && currentAddress.province === data.province
+                //     && currentAddress.district === data.district && currentAddress.ward === data.ward)  {
 
-                    } else {
+                //     } else {
                         let checkAddress = await db.Addresses.findOne({
                             where: {
                                 userID: data.id,
@@ -242,7 +242,7 @@ let updateUserData = (data) => {
                             await db.Users.update({
                                 address: newAddress.id,                                
                             }, { where: { id: data.id }})
-                        }
+                        //}
                     }
                 resolve({
                     errCode: 0,

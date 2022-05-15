@@ -15,21 +15,20 @@ module.exports = (sequelize, DataTypes) => {
       Bills.belongsTo(models.Allcodes, { foreignKey: 'billstatus', targetKey: 'key' , as: 'billstatusData' })
       Bills.belongsTo(models.Users);
       Bills.belongsTo(models.Restaurants);
-      Bills.belongsTo(models.DailyReports);
+      Bills.belongsTo(models.DailyReports, { foreignKey: 'dailyRpID', targetKey: 'id' , as: 'dailyRpData' });
       Bills.belongsToMany(models.Items, { through: 'BillDetails', foreignKey: 'billID' });
     }
   };
   Bills.init({
     userID: DataTypes.INTEGER,
     restaurantID: DataTypes.INTEGER,
-    addressID: DataTypes.INTEGER,
     dailyRpID: DataTypes.INTEGER,
     date: DataTypes.DATE,
     total: DataTypes.INTEGER,
     ship: DataTypes.INTEGER,
     payment: DataTypes.INTEGER,
     billstatus: DataTypes.INTEGER,
-    deliPhoneNumber: DataTypes.STRING,
+    deliPhoneNum: DataTypes.STRING,
     deliAddress: DataTypes.STRING,
     deliProvince: DataTypes.STRING,
     deliDistrict: DataTypes.STRING, 
