@@ -17,9 +17,6 @@ module.exports = {
       end: {
         type: Sequelize.DATE
       },
-      banner: {
-        type: Sequelize.STRING
-      },
       value: {
         type: Sequelize.FLOAT
       },
