@@ -4,7 +4,8 @@ module.exports = {
     await queryInterface.createTable('Bills', {
       id: {
         allowNull: false,
-        primaryKey: true,
+        autoIncrement: true,
+        primaryKey: true,      
         type: Sequelize.INTEGER
       },
       userID: {
@@ -14,9 +15,6 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       dailyRpID: {
-        type: Sequelize.INTEGER
-      },
-      addressID: {
         type: Sequelize.INTEGER
       },
       date: {
@@ -35,6 +33,18 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       deliPhoneNum: {
+        type: Sequelize.STRING
+      },
+      deliAddress: {
+        type: Sequelize.STRING
+      },
+      deliProvince: {
+        type: Sequelize.STRING
+      },
+      deliDistrict: {
+        type: Sequelize.STRING
+      },
+      deliWard: {
         type: Sequelize.STRING
       },
       note: {
