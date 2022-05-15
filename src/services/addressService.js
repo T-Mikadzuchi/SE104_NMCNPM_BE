@@ -103,4 +103,5 @@ let addNewAddress = (data) => {
 module.exports = {
     getAllAddress: getAllAddress,
     addNewAddress: addNewAddress
+    
 }
