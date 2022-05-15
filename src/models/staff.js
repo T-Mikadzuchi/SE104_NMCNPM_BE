@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Staffs.belongsTo(models.Allcodes, { foreignKey: 'staffstatus', targetKey: 'key' , as: 'staffstatusData' })
+      Staffs.belongsTo(models.Allcodes, { foreignKey: 'staffStatus', targetKey: 'key' , as: 'staffStatusData' })
       Staffs.belongsTo(models.Users);
       Staffs.belongsTo(models.Restaurants);
 
@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
   Staffs.init({
     userID: DataTypes.INTEGER,
     restaurantID: DataTypes.INTEGER,
-    workingday: DataTypes.DATE,
+    workingDay: DataTypes.DATE,
     staffStatus: DataTypes.INTEGER
   }, {
     sequelize,

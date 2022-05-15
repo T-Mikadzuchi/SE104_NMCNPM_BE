@@ -28,6 +28,8 @@ let initWebRoutes = (app) => {
     router.put('/api/change-password', userController.handleChangePassword);
 
     router.post('/api/add-new-staff', staffController.handleAddNewStaff);
+    router.put('/api/update-staff-status', staffController.handleUpdateStaffStatus);
+    router.get('/api/get-staff', staffController.handleGetStaff);
 
     router.get('/api/search-item', itemController.handleSearchItem);
     router.put('/api/update-item', itemController.handleUpdateItem);
