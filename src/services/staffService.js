@@ -39,7 +39,7 @@ let addNewStaff = (data) => {
                     errMessage: 'This email is already in use, please try another email!'
                 })
             } else {
-                let hashPasswordFromBcrypt = await hashUserPassword('staff123');
+                let hashPasswordFromBcrypt = await hashUserPassword('user1234');
                 let newStaff = await db.Users.create({
                     email: data.email,
                     password: hashPasswordFromBcrypt,
