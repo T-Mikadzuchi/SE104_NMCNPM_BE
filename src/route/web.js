@@ -32,6 +32,7 @@ let initWebRoutes = (app) => {
     router.get('/api/search-item', itemController.handleSearchItem);
     router.put('/api/update-item', itemController.handleUpdateItem);
     router.get('/api/get-item', itemController.handleGetItem);
+    router.post('/api/add-item', itemController.handleAddItem);
 
     router.get('/api/get-address', addressController.handleGetAddress);
     router.post('/api/add-address', addressController.handleAddAddress);
