@@ -38,6 +38,7 @@ let searchItem = (itemSearch) => {
         }
     })
 }
+
 let updateItem = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -74,6 +75,7 @@ let updateItem = (data) => {
         }
     })
 }
+
 let getAllItem = (itemId) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -133,8 +135,59 @@ let getAllItem = (itemId) => {
     })
 }
 
+let addNewItem = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.itemName || !data.type || !data.itemImage || !data.price || data.available != 1 || !data.calories || (data.featured != 0 && data.featured != 1)) {
+                resolve({
+                    errCode: 2,
+                    errMessage: 'Missing required parameters!'
+                });
+            }
+            let checkItem = await db.Items.findAll({
+                where: {
+                    
+                    itemName: data.itemName,
+                    type: data.type,
+                    itemImage: data.itemImage,
+			        price: data.price, 
+                    available: data.available,
+			        calories: data.calories,
+			        featured: data.featured
+                }
+            });
+            if (checkItem.length !=0) {
+                resolve({
+                    errCode: 1,
+                    errMessage: 'Existed!'
+                });
+            }
+            else {
+                let newItem = await db.Items.create({
+                    
+                    itemName: data.itemName,
+                    type: data.type,
+                    itemImage: data.itemImage,
+			        price: data.price, 
+                    available: data.available,
+			        calories: data.calories,
+			        featured: data.featured
+                })                           
+            }
+            resolve({
+                errCode: 0,
+                errMessage: 'Item success!'
+            });
+        }
+        catch (e) {
+            reject (e);
+        }
+    })
+}
+
 module.exports = {
     searchItem: searchItem,
     updateItem: updateItem,
-    getAllItem: getAllItem
+    getAllItem: getAllItem,
+    addNewItem: addNewItem
 }

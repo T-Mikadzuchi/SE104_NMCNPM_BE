@@ -17,11 +17,13 @@ let handleSearchItem = async(req, res) => {
         items
     });
 }
+
 let handleUpdateItem = async(req, res) => {
     let data = req.body;
     let message = await itemService.updateItem(data);
     return res.status(200).json(message);
 }
+
 let handleGetItem = async(req, res) => {
     let id = req.query.id;
     if (!id) {
@@ -40,8 +42,15 @@ let handleGetItem = async(req, res) => {
     });
 }
 
+let handleAddItem = async(req, res) => {
+    let message = await itemService.addNewItem(req.body);
+    console.log(message);
+    return res.status(200).json(message);
+}
+
 module.exports = {
     handleSearchItem: handleSearchItem,
     handleUpdateItem: handleUpdateItem,
     handleGetItem: handleGetItem,
+    handleAddItem: handleAddItem
 }

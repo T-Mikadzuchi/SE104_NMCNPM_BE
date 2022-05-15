@@ -19,6 +19,7 @@ let checkUserEmail = (userEmail) => {
         }
     })
 }
+
 let hashUserPassword = (password) => {
     return new Promise(async(resolve, reject) => {
         try {
@@ -29,6 +30,7 @@ let hashUserPassword = (password) => {
         }
     })
 }
+
 let addNewStaff = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -50,8 +52,8 @@ let addNewStaff = (data) => {
                 await db.Staffs.create({
                     userID: newStaff.id,
                     restaurantID: data.restaurantID,
-                    workingday: Date.now(),
-                    staffstatus: 1
+                    workingDay: Date.now(),
+                    staffStatus: 1
                 })
                 resolve({
                     errCode: 0,
@@ -64,6 +66,90 @@ let addNewStaff = (data) => {
     })
 }
 
+let updateStaffStatus = (data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            if (!data.id) {
+                resolve({
+                    errCode: 2,
+                    errMessage: 'Missing required parameters'
+                })
+            }
+            let staff = await db.Staffs.findOne({
+                where: { id: data.id }
+            })
+            if (staff) {
+                await db.Staffs.update({
+                    staffStatus: data.staffStatus
+
+                }, { where: { id: data.id }})
+                resolve({
+                    errCode: 0,
+                    errMessage: "Status updated successfully!"
+                })
+            } else {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Status's not found!"
+                });
+            }
+        } catch (e) {
+            reject(e)
+        }
+    })
+
+}
+
+let getAllStaff = (staffId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            let staffs = '';
+            if (staffId === "ALL") {
+                staffs = await db.Staffs.findAll({
+                    include: [
+                        {
+                            model: db.Users,                                
+                        },
+                        
+                    ],
+                    include: [
+                        {
+                            model: db.Restaurants,                                
+                        },
+                        
+                    ],
+                    raw: true, 
+                    nest: true
+                })
+            } 
+            else if (staffId) {
+                staffs = await db.Staffs.findOne({
+                    where: { id: staffId },
+                                              
+                    include: [
+                        {
+                            model: db.Users,                                
+                        },
+                    ],
+                    include: [
+                        {
+                            model: db.Restaurants,                                
+                        },
+                        
+                    ],
+                    raw: true, 
+                    nest: true       
+                })
+            }
+            resolve(staffs)
+        } catch (e) {
+            reject(e);
+        }
+    })
+}
+
 module.exports = {
     addNewStaff: addNewStaff,
+    updateStaffStatus: updateStaffStatus,
+    getAllStaff: getAllStaff
 }
