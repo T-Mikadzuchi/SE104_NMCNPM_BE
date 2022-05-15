@@ -4,6 +4,9 @@ import userController from "../controllers/userController";
 import staffController from "../controllers/staffController";
 import itemController from "../controllers/itemController";
 import billController from "../controllers/billController";
+import addressController from "../controllers/addressController";
+import restaurantController from "../controllers/restaurantController";
+import promotionController from "../controllers/promotionController";
 
 let router = express.Router();
 
@@ -29,6 +32,14 @@ let initWebRoutes = (app) => {
     router.get('/api/search-item', itemController.handleSearchItem);
     router.put('/api/update-item', itemController.handleUpdateItem);
     router.get('/api/get-item', itemController.handleGetItem);
+
+    router.get('/api/get-address', addressController.handleGetAddress);
+    router.post('/api/add-address', addressController.handleAddAddress);
+
+    router.get('/api/get-restaurant', restaurantController.handleGetRestaurant);
+
+    router.post('/api/add-promotion', promotionController.handleAddPromotion);
+    router.get('/api/get-promotion', promotionController.handleGetPromotion);
 
     router.post('/api/create-bill', billController.handleCreateBill);
 
