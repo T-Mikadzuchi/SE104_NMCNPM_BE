@@ -1,5 +1,4 @@
 import db, { sequelize } from "../models/index";
-import Op from 'sequelize';
 
 let searchItem = (itemSearch) => {
     return new Promise(async (resolve, reject) => {
