@@ -1,4 +1,4 @@
-import Op from 'sequelize';
+import { Op, QueryTypes } from 'sequelize';
 import db, { Sequelize, sequelize } from "../models/index";
 
 let createBill = (data) => {
@@ -19,31 +19,6 @@ let createBill = (data) => {
                     errMessage: 'Bill existed as draft'
                 })
             } else {
-                // let salesRpCheck = await db.SalesReports.findOne({
-                //     where: {
-                //         year: Date.now().getFullYear,
-                //         month: Date.now().getMonth,
-                //     }
-                // })
-                // if (!salesRpCheck) {
-                //     salesRpCheck = await db.SalesReports.create({
-                //         year: Date.now().getFullYear,
-                //         month: Date.now().getMonth,
-                //         totalRevenue: 0,
-                //         totalBillCount: 0
-                //     })
-                // }
-                // let dailyRpCheck = await sequelize.query('select date from dailyreports where '
-                // + 'year(date) = ' + Date.now().getFullYear() + ' and month(date) = ' + Date.now().getMonth()
-                // + 'and day(date) = ' + Date.now().getDate(), { type: QueryTypes.SELECT })
-                // if (!dailyRpCheck) {
-                //     dailyRpCheck = await db.DailyReports.create({
-                //         reportID: salesRpCheck.id,
-                //         date: Date.now(),
-                //         revenue: 0,
-                //         billCount: 0
-                //     })
-                // }
                 let bill = await db.Bills.create({
                     userID: data.userID,
                     // restaurantID: data.restaurantID,
@@ -67,13 +42,13 @@ let addItemToCart = (data) => {
                 where: { userID: data.userID, billstatus: 0 }
             })
             let priceCheck = await db.Items.findOne({
-                where: { id: data.itemId }
+                where: { id: data.itemID }
             });
             let price = priceCheck.price;
             let itemInCart = await db.BillDetails.findOne({
                 where: {
                     billID: bill.id,
-                    itemID: data.itemId
+                    itemID: data.itemID
                 }
             })
             if (itemInCart) {
@@ -81,13 +56,13 @@ let addItemToCart = (data) => {
                     number: Sequelize.literal('number + ' + data.number)
                 }, { where: {
                     billID: bill.id,
-                    itemID: data.itemId
+                    itemID: data.itemID
                 } })
             }   
             else {
                 itemInCart = await db.BillDetails.create({
                     billID: bill.id,
-                    itemID: data.itemId,
+                    itemID: data.itemID,
                     currentprice: price * data.number,
                     number: data.number
                 })
@@ -134,7 +109,7 @@ let displayCart = async(userId) => {
             },
         })
         cartinfo.push({
-            billid: item.billID, 
+            billID: item.billID, 
             number: item.number, 
             unitPricePromo: product.price * (1 - promotion),
             totalPricePromo: item.number * product.price * (1 - promotion),
@@ -144,7 +119,7 @@ let displayCart = async(userId) => {
     return cartinfo
 }
 let updateCartItem = async (data) => {
-    if (!data.userID || !data.itemId) {
+    if (!data.userID || !data.itemID) {
         return ({
             errCode: 1,
             errMessage: 'Missing required parameter'
@@ -169,7 +144,7 @@ let updateCartItem = async (data) => {
         let itemInCart = await db.BillDetails.findOne({
             where : {
                 billID: bill.id,
-                itemID: data.itemId
+                itemID: data.itemID
             }
         })
         if (!itemInCart) {
@@ -179,7 +154,7 @@ let updateCartItem = async (data) => {
             });
         }
         let priceCheck = await db.Items.findOne({
-            where: { id: data.itemId }
+            where: { id: data.itemID }
         });
         let price = priceCheck.price;
         let cartItem = await db.BillDetails.update({
@@ -187,7 +162,7 @@ let updateCartItem = async (data) => {
             currentprice: price * data.number
         }, { where: {
             billID: bill.id,
-            itemID: data.itemId
+            itemID: data.itemID
         }})
         return displayCart(user.id)
     } else {
@@ -206,14 +181,22 @@ let purchase = async(data) => {
     })
     if(!cart) return "hmu"
 
-    let date = new Date()
+    var m = new Date();
+    var dateString =
+    m.getFullYear() + "/" +
+    ("0" + (m.getMonth()+1)).slice(-2) + "/" +
+    ("0" + m.getDate()).slice(-2) + " " +
+    ("0" + m.getHours()).slice(-2) + ":" +
+    ("0" + m.getMinutes()).slice(-2) + ":" +
+    ("0" + m.getSeconds()).slice(-2);
+    let date = new Date(dateString)
     let promotionCheck = await db.Promotions.findOne({
-        // where: {
+        where: {
             [Op.and]: [
                 sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),
                 sequelize.where(sequelize.fn('date', sequelize.col('end')), '>=', date)
             ]
-        // }
+        }
     })   
 
     let promotion = 0;
@@ -264,7 +247,7 @@ let purchase = async(data) => {
         deliWard: data.ward,
         note: data.note,
     }, { where: { id: cart.id }})
-    console.log(cart.id)
+    console.log(cart.id + ' ' + date)
     const order = await db.Bills.findOne({
         where: { id: cart.id },        
         include: [
@@ -329,8 +312,101 @@ let displayOrderItems = async(billID) => {
     })
     return orderItems
 }
-let confirmOrder = async(data) => {
-
+let confirmOrder = async(billID) => {
+    if (!billID) 
+        return "Pls pick an order"
+    let bill = await db.Bills.findOne({
+        where: { id: billID }
+    })
+    if (!bill || bill.billstatus != 1) return 'wtf'
+    await db.Bills.update({
+        billstatus: 2
+    }, { where: { id: billID }})
+    return 'Order confirmed'
+}
+let cancelOrder = async (data) => {
+    if (!data.id) 
+    return "Pls pick an order"
+    let bill = await db.Bills.findOne({
+        where: { id: data.id }
+    })
+    if (!bill || bill.billstatus == 0 || bill.billstatus > 2) return 'wtf'
+    await db.Bills.update({
+        billstatus: 4,
+        note: data.note
+    }, {where: { id: data.id }})
+    return 'Cancel completed'
+}
+let confirmDelivered = async(data) => {
+    if (!data.id) 
+    return "Pls pick an order"
+    let bill = await db.Bills.findOne({
+        where: { id: data.id }
+    })
+    if (!bill || bill.billstatus != 2) return 'wtf'
+    let date = new Date()
+    let salesRpCheck = await db.SalesReports.findOne({
+        where: {
+            year: date.getFullYear(),
+            month: date.getMonth() + 1,
+        }
+    })
+    if (!salesRpCheck) {
+        salesRpCheck = await db.SalesReports.create({
+            year: date.getFullYear(),
+            month: date.getMonth() + 1,
+            totalRevenue: 0,
+            totalBillCount: 0
+        })
+    }
+    let today = date.getFullYear() + "-" +
+    ("0" + (date.getMonth()+1)).slice(-2) + "-" +
+    ("0" + date.getDate()).slice(-2) 
+    let m = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+    let tmr = m.getFullYear() + "-" +
+    ("0" + (m.getMonth()+1)).slice(-2) + "-" +
+    ("0" + m.getDate()).slice(-2) 
+    console.log(today + '\n' + tmr)
+    let dailyRpCheck = await db.DailyReports.findOne({
+        where: {
+            date: {
+                [Op.gte]: new Date(today),
+                [Op.lt]: new Date(tmr)
+            }
+        }
+    })
+    if (!dailyRpCheck) {
+        dailyRpCheck = await db.DailyReports.create({
+            reportID: salesRpCheck.id,
+            date: Date.now(),
+            revenue: 0,
+            billCount: 0
+        })
+    }
+    await db.Bills.update({
+        billstatus: 3,
+        date: date,
+        dailyRpID: dailyRpCheck.id
+    }, {where: { id: data.id }})
+    await db.DailyReports.increment({
+        revenue: bill.total,
+        billCount: 1
+    }, { where: { id: dailyRpCheck.id }})
+    await db.SalesReports.increment({
+        totalRevenue: bill.total,
+        totalBillCount: 1
+    }, { where: { id: salesRpCheck.id }})
+    return 'Order delivered'
+}
+let getAllOrders = async(userID) => {
+    const user = await db.Users.findOne({
+        where: { id: userID }
+    })
+    if (!user) return "User's not exist"
+    let bills = await db.Bills.findAll({
+        where: { userID: userID }
+    })
+    return bills;
 }
 
 module.exports = {
@@ -342,4 +418,7 @@ module.exports = {
     displayOrder: displayOrder,
     displayOrderItems: displayOrderItems,
     confirmOrder: confirmOrder,
+    cancelOrder: cancelOrder,
+    confirmDelivered: confirmDelivered,
+    getAllOrders: getAllOrders,
 }

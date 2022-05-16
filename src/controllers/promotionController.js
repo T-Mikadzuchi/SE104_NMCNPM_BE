@@ -23,8 +23,18 @@ let handleGetPromotion = async(req, res) => {
         promotions
     });
 }
+let handleGetCurrentPromotion = async(req, res) => {
+    let promotions = await promotionService.getCurrentPromotion();
+    console.log(promotions);
+    return res.status(200).json({
+        errCode: 0,
+        errMessage: "OK",
+        promotions
+    });
+}
 
 module.exports = {
     handleAddPromotion: handleAddPromotion,
-    handleGetPromotion: handleGetPromotion
+    handleGetPromotion: handleGetPromotion,
+    handleGetCurrentPromotion: handleGetCurrentPromotion
 }

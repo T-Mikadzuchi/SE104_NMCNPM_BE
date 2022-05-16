@@ -1,4 +1,5 @@
-import db from "../models/index";
+import { Op, QueryTypes } from 'sequelize';
+import db, { Sequelize, sequelize } from "../models/index";
 
 let addNewPromotion = (data) => {
     return new Promise(async (resolve, reject) => {
@@ -72,9 +73,29 @@ let getAllPromotion = (promotionId) => {
         }
     })
 }
+let getCurrentPromotion = async() => {
+    var m = new Date();
+    var dateString = m.getFullYear() + "/" +
+    ("0" + (m.getMonth()+1)).slice(-2) + "/" +
+    ("0" + m.getDate()).slice(-2) + " " +
+    ("0" + m.getHours()).slice(-2) + ":" +
+    ("0" + m.getMinutes()).slice(-2) + ":" +
+    ("0" + m.getSeconds()).slice(-2);
+    let date = new Date(dateString)
+    let promotion = await db.Promotions.findOne({
+        where: {
+            [Op.and]: [
+                sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),
+                sequelize.where(sequelize.fn('date', sequelize.col('end')), '>=', date)
+            ]
+        }
+    })   
+    console.log(promotion)
+    return promotion
+} 
 
 module.exports = {
     addNewPromotion: addNewPromotion,
-    getAllPromotion: getAllPromotion
-    
+    getAllPromotion: getAllPromotion,
+    getCurrentPromotion: getCurrentPromotion
 }
