@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       Bills.belongsTo(models.Users);
       Bills.belongsTo(models.Restaurants);
       Bills.belongsTo(models.DailyReports, { foreignKey: 'dailyRpID', targetKey: 'id' , as: 'dailyRpData' });
-      Bills.belongsToMany(models.Items, { through: 'BillDetails', foreignKey: 'billID' });
+      Bills.hasMany(models.BillDetails, { foreignKey: 'billID' });
     }
   };
   Bills.init({

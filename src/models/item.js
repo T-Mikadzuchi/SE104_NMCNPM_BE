@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Items.belongsTo(models.Allcodes, { foreignKey: 'type', targetKey: 'key' , as: 'typeData' })
       Items.belongsTo(models.Allcodes, { foreignKey: 'available', targetKey: 'key' , as: 'availableData' })
       Items.belongsTo(models.Allcodes, { foreignKey: 'featured', targetKey: 'key' , as: 'featuredData' })
-      Items.belongsToMany(models.Bills, { through: 'BillDetails', foreignKey: 'itemID' });
+      Items.hasMany(models.BillDetails, { foreignKey: 'itemID' });
     }
   };
   Items.init({
