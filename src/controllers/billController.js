@@ -70,9 +70,36 @@ let handleDisplayOrderItems = async(req, res) => {
     });
 }
 let handleConfirmOrder = async(req, res) => {
-    let data = req.body;
-    let message = await billService.confirmOrder(data);
+    let id = req.body.id;
+    let message = await billService.confirmOrder(id);
     return res.status(200).json(message);
+}
+let handleCancelOrder = async(req, res) => {
+    let data = req.body;
+    let message = await billService.cancelOrder(data);
+    return res.status(200).json(message);
+}
+let handleConfirmDelivered = async(req, res) => {
+    let data = req.body;
+    let message = await billService.confirmDelivered(data);
+    return res.status(200).json(message);
+}
+let handleGetAllOrders = async(req, res) => {
+    let id = req.query.id;
+    if (!id) {
+        return res.status(200).json({
+            errCode: 1,
+            errMessage: "Missing required parameters!",
+            orders: []
+        });
+    }
+    let orders = await billService.getAllOrders(id);
+    console.log(orders);
+    return res.status(200).json({
+        errCode: 0,
+        errMessage: "OK",
+        orders
+    });
 }
 
 module.exports = {
@@ -83,5 +110,8 @@ module.exports = {
     handlePurchase: handlePurchase,
     handleDisplayOrder: handleDisplayOrder,
     handleDisplayOrderItems: handleDisplayOrderItems,
-    handleConfirmOrder: handleConfirmOrder
+    handleConfirmOrder: handleConfirmOrder,
+    handleCancelOrder: handleCancelOrder,
+    handleConfirmDelivered: handleConfirmDelivered,
+    handleGetAllOrders: handleGetAllOrders
 }

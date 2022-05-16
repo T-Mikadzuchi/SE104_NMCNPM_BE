@@ -43,6 +43,7 @@ let initWebRoutes = (app) => {
 
     router.post('/api/add-promotion', promotionController.handleAddPromotion);
     router.get('/api/get-promotion', promotionController.handleGetPromotion);
+    router.get('/api/get-current-promotion', promotionController.handleGetCurrentPromotion);
 
     router.post('/api/create-bill', billController.handleCreateBill);
     router.post('/api/add-item-to-cart', billController.handleAddItemToCart);
@@ -52,6 +53,9 @@ let initWebRoutes = (app) => {
     router.get('/api/display-order', billController.handleDisplayOrder);
     router.get('/api/display-order-items', billController.handleDisplayOrderItems);
     router.put('/api/confirm-order', billController.handleConfirmOrder);
+    router.put('/api/cancel-order', billController.handleCancelOrder);
+    router.put('/api/confirm-delivered', billController.handleConfirmDelivered);
+    router.get('/api/get-all-orders', billController.handleGetAllOrders);
 
     router.get('/allcode', userController.getAllcode);
 

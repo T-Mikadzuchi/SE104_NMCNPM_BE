@@ -75,11 +75,11 @@ let updateItem = (data) => {
     })
 }
 
-let getAllItem = (itemId) => {
+let getAllItem = (itemID) => {
     return new Promise(async (resolve, reject) => {
         try {
             let items = '';
-            if (itemId === "ALL") {
+            if (itemID === "ALL") {
                 items = await db.Items.findAll({
                     include: [
                         {
@@ -102,9 +102,9 @@ let getAllItem = (itemId) => {
                     nest: true
                 })
             } 
-            else if (itemId) {
+            else if (itemID) {
                 items = await db.Items.findOne({
-                    where: { id: itemId },
+                    where: { id: itemID },
                                               
                     include: [
                         {
