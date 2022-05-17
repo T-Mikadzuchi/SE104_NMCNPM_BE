@@ -2,4 +2,4 @@
 - Tải Nodejs 
 - Tạo database qlnh bằng mysql
 - Chạy lệnh npx sequelize-cli db:migrate trên terminal để tạo models
-- Chạy lệnh npm install trên terminal để khởi chạy server
+- Chạy lệnh npm install trên terminal 
