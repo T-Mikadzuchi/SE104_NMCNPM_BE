@@ -157,7 +157,7 @@ let updateCartItem = async (data) => {
             where: { id: data.itemID }
         });
         let price = priceCheck.price;
-        let cartItem = await db.BillDetails.update({
+        await db.BillDetails.update({
             number: data.number,
             currentprice: price * data.number
         }, { where: {
@@ -171,6 +171,51 @@ let updateCartItem = async (data) => {
             errMessage: "User's not exist",
         });
     }
+}
+let deleteCartItem = async (data) => {
+    if (!data.userID || !data.itemID) {
+        return ({
+            errCode: 1,
+            errMessage: 'Missing required parameter'
+        })
+    }
+    let user = await db.Users.findOne({
+        where: {id: data.userID},
+    })
+    if (user) {
+        let bill = await db.Bills.findOne({
+            where: {
+                userID: data.userID,
+                billstatus: 0
+            }
+        })
+        if (!bill) {
+            return ({
+                errCode: 3,
+                errMessage: "Cart's not exist",
+            });
+        }
+        let itemInCart = await db.BillDetails.findOne({
+            where : {
+                billID: bill.id,
+                itemID: data.itemID
+            }
+        })
+        if (!itemInCart) {
+            return ({
+                errCode: 4,
+                errMessage: "Item's not exist in cart",
+            });
+        }
+        await db.BillDetails.destroy({
+            where: {
+                billID: bill.id,
+                itemID: data.itemID
+            }
+        })
+        return "Delete cart item completed"
+    }
+    else return "User's not exists"
 }
 let purchase = async(data) => {
     const cart = await db.Bills.findOne({
@@ -414,6 +459,7 @@ module.exports = {
     addItemToCart: addItemToCart,
     displayCart: displayCart,
     updateCartItem: updateCartItem,
+    deleteCartItem: deleteCartItem,
     purchase: purchase,
     displayOrder: displayOrder,
     displayOrderItems: displayOrderItems,

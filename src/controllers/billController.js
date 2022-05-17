@@ -30,6 +30,11 @@ let handleUpdateCartItem = async(req, res) => {
     let message = await billService.updateCartItem(data);
     return res.status(200).json(message);
 }
+let handleDeleteCartItem = async(req, res) => {
+    let data = req.body;
+    let message = await billService.deleteCartItem(data);
+    return res.status(200).json(message);
+}
 let handlePurchase = async(req, res) => {
     let data = req.body;
     let message = await billService.purchase(data);
@@ -107,6 +112,7 @@ module.exports = {
     handleAddItemToCart: handleAddItemToCart,
     handleDisplayCart: handleDisplayCart,
     handleUpdateCartItem: handleUpdateCartItem,
+    handleDeleteCartItem: handleDeleteCartItem,
     handlePurchase: handlePurchase,
     handleDisplayOrder: handleDisplayOrder,
     handleDisplayOrderItems: handleDisplayOrderItems,
