@@ -48,9 +48,27 @@ let handleAddItem = async(req, res) => {
     return res.status(200).json(message);
 }
 
+let handleGetItemSortByType = async(req, res) => {
+    let data = req.body
+    let items = await itemService.getItemSortByType(data);
+    console.log(items);
+    return res.status(200).json({
+        items
+    });
+}
+let handleGetFeaturedItem = async(req, res) => {
+    let items = await itemService.getFeaturedItem();
+    console.log(items);
+    return res.status(200).json({
+        items
+    });
+}
+
 module.exports = {
     handleSearchItem: handleSearchItem,
     handleUpdateItem: handleUpdateItem,
     handleGetItem: handleGetItem,
-    handleAddItem: handleAddItem
+    handleGetItemSortByType: handleGetItemSortByType,
+    handleAddItem: handleAddItem,
+    handleGetFeaturedItem: handleGetFeaturedItem
 }
