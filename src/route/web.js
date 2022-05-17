@@ -24,7 +24,7 @@ let initWebRoutes = (app) => {
     // signup api here 
     router.post('/api/create-new-user', userController.handleCreateNewUser);
     router.put('/api/edit-user', userController.handleEditUser);
-    router.delete('/api/delete-user', userController.handleDeleteUser);
+    //router.delete('/api/delete-user', userController.handleDeleteUser);
     router.put('/api/change-password', userController.handleChangePassword);
 
     router.post('/api/add-new-staff', staffController.handleAddNewStaff);
@@ -49,6 +49,7 @@ let initWebRoutes = (app) => {
     router.post('/api/add-item-to-cart', billController.handleAddItemToCart);
     router.get('/api/display-cart', billController.handleDisplayCart);
     router.put('/api/update-cart-item', billController.handleUpdateCartItem);
+    router.delete('/api/delete-cart-item', billController.handleDeleteCartItem);
     router.put('/api/purchase', billController.handlePurchase);
     router.get('/api/display-order', billController.handleDisplayOrder);
     router.get('/api/display-order-items', billController.handleDisplayOrderItems);
