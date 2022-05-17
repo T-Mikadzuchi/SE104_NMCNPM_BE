@@ -85,17 +85,20 @@ let getAllItem = (itemID) => {
                         {
                             model: db.Allcodes,                            
                             as: 'typeData',
-                            where: { type: 'type' }
+                            where: { type: 'type' },
+                            attributes: ['value']
                         },
                         {
                             model: db.Allcodes,                            
                             as: 'availableData',
-                            where: { type: 'available' }
+                            where: { type: 'available' },
+                            attributes: ['value']
                         },
                         {
                             model: db.Allcodes,                            
                             as: 'featuredData',
-                            where: { type: 'featured' }
+                            where: { type: 'featured' },
+                            attributes: ['value']
                         },
                     ],
                     raw: true, 
@@ -134,6 +137,42 @@ let getAllItem = (itemID) => {
     })
 }
 
+let getItemSortByType = (data) => {
+    if (!data.type) return {
+        errCode: 1,
+        errMessage: "Missing required parameter"
+    }
+    let items = db.Items.findAll({
+        where: { type: data.type },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        include: [
+            {
+                model: db.Allcodes,                            
+                as: 'typeData',
+                where: { type: 'type' },
+                attributes: ['value']
+            },
+            {
+                model: db.Allcodes,                            
+                as: 'availableData',
+                where: { type: 'available' },
+                attributes: ['value']
+            },
+            {
+                model: db.Allcodes,                            
+                as: 'featuredData',
+                where: { type: 'featured' },
+                attributes: ['value']
+            },
+        ],
+        raw: true, 
+        nest: true
+    })
+    return items
+}
+
 let addNewItem = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
@@ -144,8 +183,7 @@ let addNewItem = (data) => {
                 });
             }
             let checkItem = await db.Items.findAll({
-                where: {
-                    
+                where: {                    
                     itemName: data.itemName,
                     type: data.type,
                     itemImage: data.itemImage,
@@ -161,9 +199,7 @@ let addNewItem = (data) => {
                     errMessage: 'Existed!'
                 });
             }
-            else {
-                let newItem = await db.Items.create({
-                    
+                let newItem = await db.Items.create({                    
                     itemName: data.itemName,
                     type: data.type,
                     itemImage: data.itemImage,
@@ -172,10 +208,11 @@ let addNewItem = (data) => {
 			        calories: data.calories,
 			        featured: data.featured
                 })                           
-            }
+            
             resolve({
                 errCode: 0,
-                errMessage: 'Item success!'
+                errMessage: 'Item added successfully!',
+                newItem
             });
         }
         catch (e) {
@@ -183,10 +220,43 @@ let addNewItem = (data) => {
         }
     })
 }
+let getFeaturedItem = () => {
+    let items = db.Items.findAll({
+        where: { featured: 1 },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        include: [
+            {
+                model: db.Allcodes,                            
+                as: 'typeData',
+                where: { type: 'type' },
+                attributes: ['value']
+            },
+            {
+                model: db.Allcodes,                            
+                as: 'availableData',
+                where: { type: 'available' },
+                attributes: ['value']
+            },
+            {
+                model: db.Allcodes,                            
+                as: 'featuredData',
+                where: { type: 'featured' },
+                attributes: ['value']
+            },
+        ],
+        raw: true, 
+        nest: true
+    })
+    return items
+}
 
 module.exports = {
     searchItem: searchItem,
     updateItem: updateItem,
     getAllItem: getAllItem,
-    addNewItem: addNewItem
+    getItemSortByType: getItemSortByType,
+    addNewItem: addNewItem,
+    getFeaturedItem: getFeaturedItem
 }
