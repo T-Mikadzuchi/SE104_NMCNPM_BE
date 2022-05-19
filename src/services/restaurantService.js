@@ -10,7 +10,9 @@ let getAllRestaurant = (restaurantId) => {
                         {
                             model: db.OpeningHours,                            
                             as: 'openData',
-
+                            attributes: {
+                                exclude: ['createdAt', 'updatedAt']
+                            },
                         },
                     ],
                     raw: true, 
@@ -20,7 +22,9 @@ let getAllRestaurant = (restaurantId) => {
             else if (restaurantId) {
                 restaurants = await db.Restaurants.findOne({
                     where: { id: restaurantId },
-                                              
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },                          
                     include: [
                         {
                             model: db.OpeningHours,                            

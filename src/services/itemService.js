@@ -6,6 +6,9 @@ let searchItem = (itemSearch) => {
             let items = '';
             if (itemSearch) {
                 items = await db.Items.findAll({
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },
                     where: {
                         itemName: sequelize.where(sequelize.fn('LOWER', sequelize.col('itemName')),
                          'LIKE', '%' + itemSearch.toLowerCase() + '%')
@@ -48,6 +51,9 @@ let updateItem = (data) => {
                 })
             }
             let item = await db.Items.findOne({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
                 where: { id: data.id }
             })
             if (item) {
@@ -81,24 +87,29 @@ let getAllItem = (itemID) => {
             let items = '';
             if (itemID === "ALL") {
                 items = await db.Items.findAll({
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },
                     include: [
                         {
                             model: db.Allcodes,                            
                             as: 'typeData',
                             where: { type: 'type' },
-                            attributes: ['value']
+                            attributes: ['value'],
                         },
                         {
                             model: db.Allcodes,                            
                             as: 'availableData',
                             where: { type: 'available' },
-                            attributes: ['value']
+                            attributes: ['value'],
+                            
                         },
                         {
                             model: db.Allcodes,                            
                             as: 'featuredData',
                             where: { type: 'featured' },
-                            attributes: ['value']
+                            attributes: ['value'],
+                            
                         },
                     ],
                     raw: true, 
@@ -108,7 +119,9 @@ let getAllItem = (itemID) => {
             else if (itemID) {
                 items = await db.Items.findOne({
                     where: { id: itemID },
-                                              
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },                          
                     include: [
                         {
                             model: db.Allcodes,                            
@@ -183,6 +196,9 @@ let addNewItem = (data) => {
                 });
             }
             let checkItem = await db.Items.findAll({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
                 where: {                    
                     itemName: data.itemName,
                     type: data.type,

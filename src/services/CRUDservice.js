@@ -38,7 +38,12 @@ let hashUserPassword = (password) => {
 let getAllUser = () => {
     return new Promise(async(resolve, reject) => {
         try {
-            let users = db.Users.findAll({ raw: true, });
+            let users = db.Users.findAll({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                }, 
+                raw: true, 
+            });
             resolve(users);
         } catch (e) {
             reject(e)
@@ -50,7 +55,11 @@ let getUserInfoById = (userId) => {
     return new Promise(async(resolve, reject) => {
         try {
             let user = await db.Users.findOne({
-                where: {id: userId}, raw: true,
+                where: {id: userId},
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                }, 
+                raw: true,
             })
             if (user) {
                 resolve(user)
@@ -67,6 +76,9 @@ let updateUserData = (data) => {
     return new Promise (async(resolve, reject) => {
         try {
             let user = await db.Users.findOne({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
                 where: {id: data.id}
             })
             if (user) {
@@ -75,7 +87,11 @@ let updateUserData = (data) => {
 
                 await user.save();
 
-                let allUsers = await db.Users.findAll();
+                let allUsers = await db.Users.findAll({
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },
+                });
                 resolve(allUsers);
             } else {
                 resolve();
@@ -90,6 +106,9 @@ let deleteUserById = (userId) => {
     return new Promise (async (resolve, reject) => {
         try {
             let user = await db.Users.findOne({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
                 where: {id: userId}
             })
             if (user) {

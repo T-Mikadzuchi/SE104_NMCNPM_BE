@@ -5,9 +5,15 @@ let createBill = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.Users.findOne({
-                where: { id: data.userID }
+                where: { id: data.userID },
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
             })
             let checkBillExist = await db.Bills.findOne({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
                 where: {
                     userID: user.id,
                     billstatus: 0
@@ -39,17 +45,26 @@ let addItemToCart = (data) => {
         try {            
             await createBill(data);
             let bill = await db.Bills.findOne({
-                where: { userID: data.userID, billstatus: 0 }
+                where: { userID: data.userID, billstatus: 0 },
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
             })
             let priceCheck = await db.Items.findOne({
-                where: { id: data.itemID }
+                where: { id: data.itemID },
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
             });
             let price = priceCheck.price;
             let itemInCart = await db.BillDetails.findOne({
                 where: {
                     billID: bill.id,
                     itemID: data.itemID
-                }
+                },
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
             })
             if (itemInCart) {
                 await db.BillDetails.update({
@@ -78,18 +93,25 @@ let displayCart = async(userId) => {
         where: {
             userID: userId,
             billstatus: 0
-        }
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
     })
     if(!cart) return "hmu"
 
     let date = new Date()
     let promotionCheck = await db.Promotions.findOne({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
         // where: {
             [Op.and]: [
                 sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),
                 sequelize.where(sequelize.fn('date', sequelize.col('end')), '>=', date)
             ]
         // }
+        
     })   
 
     let promotion = 0;
@@ -98,7 +120,10 @@ let displayCart = async(userId) => {
     const bill = await db.BillDetails.findAll({
         where: {
             billID : cart.id
-        }
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
     })
 
     let cartinfo = []
@@ -106,6 +131,9 @@ let displayCart = async(userId) => {
         const product = await db.Items.findOne({
             where: {
                 id : item.itemID
+            },
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
             },
         })
         cartinfo.push({
@@ -127,9 +155,15 @@ let updateCartItem = async (data) => {
     }
     let user = await db.Users.findOne({
         where: {id: data.userID},
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
     })
     if (user) {
         let bill = await db.Bills.findOne({
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
             where: {
                 userID: data.userID,
                 billstatus: 0
@@ -142,6 +176,9 @@ let updateCartItem = async (data) => {
             });
         }
         let itemInCart = await db.BillDetails.findOne({
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
             where : {
                 billID: bill.id,
                 itemID: data.itemID
@@ -154,6 +191,9 @@ let updateCartItem = async (data) => {
             });
         }
         let priceCheck = await db.Items.findOne({
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
             where: { id: data.itemID }
         });
         let price = priceCheck.price;
@@ -181,9 +221,15 @@ let deleteCartItem = async (data) => {
     }
     let user = await db.Users.findOne({
         where: {id: data.userID},
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
     })
     if (user) {
         let bill = await db.Bills.findOne({
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
             where: {
                 userID: data.userID,
                 billstatus: 0
@@ -196,6 +242,9 @@ let deleteCartItem = async (data) => {
             });
         }
         let itemInCart = await db.BillDetails.findOne({
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
             where : {
                 billID: bill.id,
                 itemID: data.itemID
@@ -219,6 +268,9 @@ let deleteCartItem = async (data) => {
 }
 let purchase = async(data) => {
     const cart = await db.Bills.findOne({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
         where: {
             userID: data.userID,
             billstatus: 0
@@ -240,6 +292,9 @@ let purchase = async(data) => {
     ("0" + m.getSeconds()).slice(-2);
     let date = new Date(dateString)
     let promotionCheck = await db.Promotions.findOne({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
         where: {
             [Op.and]: [
                 sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),
@@ -253,6 +308,9 @@ let purchase = async(data) => {
         promotion = promotionCheck.value;
 
     const bill = await db.BillDetails.findAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
         where: {
             billID : cart.id
         }
@@ -262,6 +320,9 @@ let purchase = async(data) => {
     let cartItems = []
     for await (let item of bill) {
         const product = await db.Items.findOne({
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
             where: {
                 id : item.itemID
             },
@@ -298,7 +359,10 @@ let purchase = async(data) => {
     }, { where: { id: cart.id }})
     console.log(cart.id + ' ' + date)
     const order = await db.Bills.findOne({
-        where: { id: cart.id },        
+        where: { id: cart.id },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },        
         include: [
             {
                 model: db.Allcodes,                            
@@ -328,13 +392,19 @@ let purchase = async(data) => {
 //for staff only
 let displayOrder = async(userID) => {
     const staff = await db.Staffs.findOne({
-        where: { userID: userID, staffstatus: 1 }
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
+        where: { userID: userID, staffStatus: 1 }
     })
     if (!staff) return {
         errCode: 1,
         errMessage: "You don't have permission to access"
     }
     let orders = await db.Bills.findAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
         where: {
             restaurantID: staff.restaurantID,
         }, 
@@ -343,6 +413,9 @@ let displayOrder = async(userID) => {
 } 
 let displayOrderItems = async(billID) => {
     const order = await db.Bills.findOne({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
         where: { id: billID }
     })
     if (!order) return 'hmu'
@@ -365,6 +438,9 @@ let confirmOrder = async(billID) => {
     if (!billID) 
         return "Pls pick an order"
     let bill = await db.Bills.findOne({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
         where: { id: billID }
     })
     if (!bill || bill.billstatus != 1) return 'wtf'
@@ -377,6 +453,9 @@ let cancelOrder = async (data) => {
     if (!data.id) 
     return "Pls pick an order"
     let bill = await db.Bills.findOne({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
         where: { id: data.id }
     })
     if (!bill || bill.billstatus == 0 || bill.billstatus > 2) return 'wtf'
@@ -449,11 +528,17 @@ let confirmDelivered = async(data) => {
 }
 let getAllOrders = async(userID) => {
     const user = await db.Users.findOne({
-        where: { id: userID }
+        where: { id: userID },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
     })
     if (!user) return "User's not exist"
     let bills = await db.Bills.findAll({
-        where: { userID: userID }
+        where: { userID: userID },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
     })
     return bills;
 }

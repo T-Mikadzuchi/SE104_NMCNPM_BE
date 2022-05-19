@@ -11,6 +11,9 @@ let addNewPromotion = (data) => {
                 });
             }
             let checkPromotion = await db.Promotions.findAll({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
                 where: {
                     
                     promotionName: data.promotionName,
@@ -54,12 +57,18 @@ let getAllPromotion = (promotionId) => {
             let promotions = '';
             if (promotionId === "ALL") {
                 promotions = await db.Promotions.findAll({
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },
                     raw: true, 
                     nest: true
                 })
             } 
             else if (promotionId) {
                 promotions = await db.Promotions.findOne({
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },
                     where: { 
                         id: promotionId 
                     },                          
@@ -83,6 +92,9 @@ let getCurrentPromotion = async() => {
     ("0" + m.getSeconds()).slice(-2);
     let date = new Date(dateString)
     let promotion = await db.Promotions.findOne({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },
         where: {
             [Op.and]: [
                 sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),

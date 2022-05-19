@@ -9,6 +9,9 @@ let getAllAddress = (userId) => {
                 where: {
                     userID: userId 
                 },
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
                 include: [
                     {
                         model: db.Users,                            
@@ -35,6 +38,9 @@ let addNewAddress = (data) => {
                 });
             }
             let checkAddress = await db.Addresses.findOne({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
                 where: {
                     userID: data.userID,
                     detail: data.detail,

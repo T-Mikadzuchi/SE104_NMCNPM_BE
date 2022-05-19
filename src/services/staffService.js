@@ -7,6 +7,9 @@ let checkUserEmail = (userEmail) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.Users.findOne({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
                 where: {email: userEmail}
             })
             if (user) {
@@ -76,6 +79,9 @@ let updateStaffStatus = (data) => {
                 })
             }
             let staff = await db.Staffs.findOne({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
                 where: { id: data.id }
             })
             if (staff) {
@@ -106,6 +112,9 @@ let getAllStaff = (staffId) => {
             let staffs = '';
             if (staffId === "ALL") {
                 staffs = await db.Staffs.findAll({
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },
                     include: [
                         {
                             model: db.Users,                                
@@ -125,7 +134,9 @@ let getAllStaff = (staffId) => {
             else if (staffId) {
                 staffs = await db.Staffs.findOne({
                     where: { id: staffId },
-                                              
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },                          
                     include: [
                         {
                             model: db.Users,                                

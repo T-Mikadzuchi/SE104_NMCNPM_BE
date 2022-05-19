@@ -10,6 +10,9 @@ let handleUserLogin = (email, password) => {
             let isExist = await checkUserEmail(email);
             if (isExist) {
                 let user = await db.Users.findOne({
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },
                     attributes: ['email', 'roleID', 'password'],
                     where: { email: email }, 
                     raw: true
@@ -46,6 +49,9 @@ let checkUserEmail = (userEmail) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.Users.findOne({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },
                 where: {email: userEmail}
             })
             if (user) {
@@ -65,8 +71,10 @@ let getAllUsers = (userId) => {
             if (userId === "ALL") {
                 users = await db.Users.findAll({
                     attributes: {
-                        exclude: ['password']
-                    },                          
+                        exclude: ['password'],
+                        exclude: ['createdAt', 'updatedAt']
+                    },
+                                  
                     include: [
                         {
                             model: db.Allcodes,                            
@@ -90,7 +98,9 @@ let getAllUsers = (userId) => {
                     where: { id: userId },
                     attributes: {
                         exclude: ['password'],
-                    },                          
+                        exclude: ['createdAt', 'updatedAt']
+                    },
+                                             
                     include: [
                         {
                             model: db.Allcodes,                            
@@ -160,6 +170,9 @@ let deleteUser = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.Users.findOne({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },  
                 where: {id: userId}
             })
             if (!user) {
@@ -190,6 +203,9 @@ let updateUserData = (data) => {
                 })
             }
             let user = await db.Users.findOne({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },  
                 where: {id: data.id},
                 //raw: false
             })
@@ -211,6 +227,9 @@ let updateUserData = (data) => {
 
                 //     } else {
                         let checkAddress = await db.Addresses.findOne({
+                            attributes: {
+                                exclude: ['createdAt', 'updatedAt']
+                            },  
                             where: {
                                 userID: data.id,
                                 detail: data.detail,
@@ -263,7 +282,11 @@ let getAllcodeService = () => {
     return new Promise(async (resolve, reject) => {
         try {
             let res = {};
-            let allcode = await db.Allcodes.findAll();
+            let allcode = await db.Allcodes.findAll({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },  
+            });
             res.errCode = 0;
             res.data = allcode;
             resolve(res);
@@ -282,6 +305,9 @@ let changePassword = (data) => {
                 })
             }
             let user = await db.Users.findOne({
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },  
                 where: {id: data.id}
             })
             if (user) { 
