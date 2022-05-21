@@ -176,7 +176,7 @@ let getItemSortByType = (data) => {
 let addNewItem = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.itemName || !data.type || !data.itemImage || !data.price || data.available != 1 || !data.calories || (data.featured != 0 && data.featured != 1)) {
+            if (!data.itemName || !data.type || !data.itemImage || !data.price || !data.calories || (data.featured != 0 && data.featured != 1)) {
                 resolve({
                     errCode: 2,
                     errMessage: 'Missing required parameters!'
@@ -188,7 +188,7 @@ let addNewItem = (data) => {
                     type: data.type,
                     itemImage: data.itemImage,
 			        price: data.price, 
-                    available: data.available,
+                    available: 1,
 			        calories: data.calories,
 			        featured: data.featured
                 }
@@ -204,7 +204,6 @@ let addNewItem = (data) => {
                     type: data.type,
                     itemImage: data.itemImage,
 			        price: data.price, 
-                    available: data.available,
 			        calories: data.calories,
 			        featured: data.featured
                 })                           
