@@ -28,7 +28,7 @@ let getAllAddress = (userId) => {
 let addNewAddress = (data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.userID || !data.detail || !data.province || !data.district || !data.ward || !data.default) {
+            if (!data.userID || !data.detail || !data.province || !data.district || !data.ward) {
                 resolve({
                     errCode: 2,
                     errMessage: 'Missing required parameters!'
