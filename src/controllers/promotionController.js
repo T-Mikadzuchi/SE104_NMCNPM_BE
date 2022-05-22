@@ -7,7 +7,7 @@ let handleAddPromotion = async(req, res) => {
 }
 
 let handleGetPromotion = async(req, res) => {
-    let id = req.query.promotionId;
+    let id = req.query.id;
     if (!id) {
         return res.status(200).json({
             errCode: 1,

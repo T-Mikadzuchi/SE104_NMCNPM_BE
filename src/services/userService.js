@@ -65,22 +65,23 @@ let getAllUsers = (userId) => {
             if (userId === "ALL") {
                 users = await db.Users.findAll({
                     attributes: {
-                        exclude: ['password']
+                        exclude: ['password', 'createdAt', 'updatedAt', 'address', 'roleID']
                     },                          
                     include: [
                         {
                             model: db.Allcodes,                            
+                            attributes: ['value'], 
                             as: 'roleData',
                             where: { type: 'roleID' }
                         },
                         {
                             model: db.Addresses,
+                            attributes: ['detail', 'province', 'district', 'ward'],
                             where: {
-                                userID: userId,
                                 default: 1
                             }
                         }
-                    ],
+                    ],  
                     raw: true, 
                     nest: true   
                 })
@@ -89,22 +90,23 @@ let getAllUsers = (userId) => {
                 users = await db.Users.findOne({
                     where: { id: userId },
                     attributes: {
-                        exclude: ['password'],
+                        exclude: ['password', 'createdAt', 'updatedAt', 'address', 'roleID']
                     },                          
                     include: [
                         {
                             model: db.Allcodes,                            
+                            attributes: ['value'], 
                             as: 'roleData',
                             where: { type: 'roleID' }
                         },
                         {
                             model: db.Addresses,
+                            attributes: ['detail', 'province', 'district', 'ward'],
                             where: {
-                                userID: userId,
                                 default: 1
                             }
                         }
-                    ],
+                    ],  
                     raw: true, 
                     nest: true       
                 })
