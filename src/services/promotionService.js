@@ -1,53 +1,69 @@
 import { Op, QueryTypes } from 'sequelize';
 import db, { Sequelize, sequelize } from "../models/index";
 
-let addNewPromotion = (data) => {
-    return new Promise(async (resolve, reject) => {
+let addNewPromotion = async (data) => {
         try {
             if (!data.promotionName || !data.begin || !data.end || !data.value) {
-                resolve({
+                return({
                     errCode: 2,
                     errMessage: 'Missing required parameters!'
                 });
             }
+            if (isNaN(data.begin) || isNaN(data.end))
+            return({
+                errCode: 3,
+                errMessage: "Date invalid"
+            })
+            if (data.begin >= data.end) 
+            return({
+                errCode: 4,
+                errMessage: "Invalid input, end time must be after begin"
+            })
+            if (Date.parse(data.begin) <= Date.now()) 
+            return({
+                errCode: 5,
+                errMessage: "Only add future promotion"
+            })
             let checkPromotion = await db.Promotions.findAll({
                 where: {
-                    
-                    promotionName: data.promotionName,
-                    begin: data.begin,
-                    end: data.end,
-
-                    value: data.value
+                    [Op.or]: {
+                        begin: {
+                            [Op.between]: [ data.begin, data.end ]
+                        },
+                        end: {
+                            [Op.between]: [data.begin, data.end]
+                        }
+                    }
                 }
             });
+            console.log(checkPromotion)
+            let newPromotion;
             if (checkPromotion.length !=0) {
-                resolve({
+                return({
                     errCode: 1,
-                    errMessage: 'Existed!'
+                    errMessage: 'Promotion exists during the input time!',
+                    checkPromotion
                 });
             }
             else {
-                let newPromotion = await db.Promotions.create({
-                    
+                    newPromotion = await db.Promotions.create({
                     promotionName: data.promotionName,
                     begin: data.begin,
                     end: data.end,
-
-                    value: data.value
-
-                })                           
-            }
-            resolve({
+                    value: data.value / 100
+                })                      
+            return({
                 errCode: 0,
-                errMessage: 'Promotion success!'
-            });
+                errMessage: 'Promotion success!',
+                newPromotion
+            });                     
+            }
         }
         catch (e) {
-            reject (e);
+            console.log(e);
         }
-    })
-}
 
+}
 let getAllPromotion = (promotionId) => {
     return new Promise(async (resolve, reject) => {
         try {
