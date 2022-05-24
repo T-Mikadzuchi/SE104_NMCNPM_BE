@@ -7,6 +7,11 @@ let createBill = (data) => {
             let user = await db.Users.findOne({
                 where: { id: data.userID }
             })
+            if (!user) 
+                resolve({
+                    errCode: 1,
+                    errMessage: "User's not exist"
+                })
             let checkBillExist = await db.Bills.findOne({
                 where: {
                     userID: user.id,
@@ -15,7 +20,7 @@ let createBill = (data) => {
             })
             if (checkBillExist) {
                 resolve({
-                    errCode: 1,
+                    errCode: 2,
                     errMessage: 'Bill existed as draft'
                 })
             } else {
@@ -37,10 +42,21 @@ let createBill = (data) => {
 let addItemToCart = (data) => {
     return new Promise(async (resolve, reject) => {
         try {            
+            if (!data.userID || !data.itemID || !data.number) 
+            resolve({
+                errCode: 2,
+                errMessage: "Missing required parameter"
+            })
             await createBill(data);
             let bill = await db.Bills.findOne({
                 where: { userID: data.userID, billstatus: 0 }
             })
+            if (!bill) {
+                resolve({
+                    errCode: 1,
+                    errMessage: "Cart's not exists"
+                })
+            }
             let priceCheck = await db.Items.findOne({
                 where: { id: data.itemID }
             });
@@ -52,7 +68,7 @@ let addItemToCart = (data) => {
                 }
             })
             if (itemInCart) {
-                await db.BillDetails.update({
+                await  db.BillDetails.update({
                     number: Sequelize.literal('number + ' + data.number)
                 }, { where: {
                     billID: bill.id,
@@ -67,7 +83,11 @@ let addItemToCart = (data) => {
                     number: data.number
                 })
             }
-            resolve(itemInCart)
+            resolve({
+                errCode: 0,
+                errMessage: "Add item to cart succeeded",
+                itemInCart
+            })
         } catch (e) {
             reject(e)
         }
@@ -218,13 +238,19 @@ let deleteCartItem = async (data) => {
     else return "User's not exists"
 }
 let purchase = async(data) => {
+    if (!data.userID || !data.restaurantID || !data.payment || !data.phoneNumber || !data.address
+        || !data.province || !data.district || !data.ward) 
+        return { 
+            errCode: 1,
+            errMessage: "Missing required parameters"
+        }
     const cart = await db.Bills.findOne({
         where: {
             userID: data.userID,
             billstatus: 0
         }
     })
-    if(!cart) return "hmu"
+    if (!cart) return "hmu"
     var m = new Date();
     let res = await db.Restaurants.findByPk(data.restaurantID);
     let open = await db.OpeningHours.findByPk(res.openID);
@@ -257,6 +283,7 @@ let purchase = async(data) => {
             billID : cart.id
         }
     })
+    if (bill.length == 0) return "You can't purchase an empty cart!"
     let subtotal = 0;
     let discount = 0;
     let cartItems = []

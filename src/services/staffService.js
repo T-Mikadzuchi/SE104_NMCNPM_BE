@@ -90,7 +90,7 @@ let updateStaffStatus = (data) => {
             } else {
                 resolve({
                     errCode: 1,
-                    errMessage: "Status's not found!"
+                    errMessage: "Staff's not found!"
                 });
             }
         } catch (e) {
