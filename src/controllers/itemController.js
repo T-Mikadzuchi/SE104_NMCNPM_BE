@@ -1,7 +1,7 @@
 import itemService from '../services/itemService'
 
 let handleSearchItem = async(req, res) => {
-    let itemSearch = req.body.search;
+    let itemSearch = req.query.search;
     if (!itemSearch) {
         return res.status(200).json({
             errCode: 1,
