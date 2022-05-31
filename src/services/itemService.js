@@ -9,22 +9,28 @@ let searchItem = (itemSearch) => {
                     where: {
                         itemName: sequelize.where(sequelize.fn('LOWER', sequelize.col('itemName')),
                          'LIKE', '%' + itemSearch.toLowerCase() + '%')
-                    },
+                    },                    
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },                           
                     include: [
                         {
                             model: db.Allcodes,                            
                             as: 'typeData',
-                            where: { type: 'type' }
+                            where: { type: 'type' },
+                            attributes: ['value']
                         },
                         {
                             model: db.Allcodes,                            
                             as: 'availableData',
-                            where: { type: 'available' }
+                            where: { type: 'available' },
+                            attributes: ['value']
                         },
                         {
                             model: db.Allcodes,                            
                             as: 'featuredData',
-                            where: { type: 'featured' }
+                            where: { type: 'featured' },
+                            attributes: ['value']
                         },
                     ],
                     raw: true, 
@@ -81,6 +87,9 @@ let getAllItem = (itemID) => {
             let items = '';
             if (itemID === "ALL") {
                 items = await db.Items.findAll({
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },                           
                     include: [
                         {
                             model: db.Allcodes,                            
@@ -108,7 +117,9 @@ let getAllItem = (itemID) => {
             else if (itemID) {
                 items = await db.Items.findOne({
                     where: { id: itemID },
-                                              
+                    attributes: {
+                        exclude: ['createdAt', 'updatedAt']
+                    },                           
                     include: [
                         {
                             model: db.Allcodes,                            
