@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Staffs.init({
-    userID: DataTypes.INTEGER,
+    userID: DataTypes.STRING,
     restaurantID: DataTypes.INTEGER,
     workingDay: DataTypes.DATE,
     staffStatus: DataTypes.INTEGER

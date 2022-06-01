@@ -42,111 +42,85 @@ let handleUserLogin = (email, password) => {
         }
     })
 }
-let checkUserEmail = (userEmail) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let user = await db.Users.findOne({
-                where: {email: userEmail}
-            })
-            if (user) {
-                resolve(true)
-            } else {
-                resolve(false)
-            }
-        } catch (e) {
-            reject(e);
+let checkUserEmail = async(userEmail) => {
+    try {
+        let user = await db.Users.findOne({
+            where: {email: userEmail}
+        })
+        if (user) {
+            return(true)
+        } else {
+            return(false)
         }
-    })
+    } catch (e) {
+        console.log(e);
+    }
 }
 let getAllUsers = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let users = '';
-            if (userId === "ALL") {
-                users = await db.Users.findAll({
-                    attributes: {
-                        exclude: ['password', 'createdAt', 'updatedAt', 'address', 'roleID']
-                    },                          
-                    include: [
-                        {
-                            model: db.Allcodes,                            
-                            attributes: ['value'], 
-                            as: 'roleData',
-                            where: { type: 'roleID' }
-                        },
-                        {
-                            model: db.Addresses,
-                            attributes: ['detail', 'province', 'district', 'ward'],
-                            where: {
-                                default: 1
-                            }
+            users = await db.Users.findOne({
+                where: { uid: userId },
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt', 'address', 'roleID']
+                },                          
+                include: [
+                    {
+                        model: db.Allcodes,                            
+                        attributes: ['value'], 
+                        as: 'roleData',
+                        where: { type: 'roleID' }
+                    },
+                    {
+                        model: db.Addresses,
+                        attributes: ['detail', 'province', 'district', 'ward'],
+                        where: {
+                            default: 1
                         }
-                    ],  
-                    raw: true, 
-                    nest: true   
-                })
-            } 
-            else if (userId) {
-                users = await db.Users.findOne({
-                    where: { id: userId },
-                    attributes: {
-                        exclude: ['password', 'createdAt', 'updatedAt', 'address', 'roleID']
-                    },                          
-                    include: [
-                        {
-                            model: db.Allcodes,                            
-                            attributes: ['value'], 
-                            as: 'roleData',
-                            where: { type: 'roleID' }
-                        },
-                        {
-                            model: db.Addresses,
-                            attributes: ['detail', 'province', 'district', 'ward'],
-                            where: {
-                                default: 1
-                            }
-                        }
-                    ],  
-                    raw: true, 
-                    nest: true       
-                })
-            }
+                    }
+                ],  
+                raw: true, 
+                nest: true       
+            })
+            
             resolve(users)
         } catch (e) {
             reject(e);
         }
     })
 }
-// signup function here
-let createNewUser = (data) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let check = await checkUserEmail(data.email);
-            if (check === true) {
-                resolve({
-                    errCode: 1,
-                    errMessage: 'Your email is already in use, please try another email!'
-                })
-            } else {
-                let hashPasswordFromBcrypt = await hashUserPassword(data.password);
-                await db.Users.create({
-                    email: data.email,
-                    password: hashPasswordFromBcrypt,
-                    name: data.name,
-                    // dob: data.dob,
-                    // phoneNumber: data.phoneNumber,
-                    // gender: data.gender == 1 ? "female" : "male",
-                    roleID: 2
-                })
-                resolve({
-                    errCode: 0,
-                    errMessage: 'OK'
-                })
-            }
-        }catch (e) {
-            reject(e);
-        }
+let createNewUser = async (uid, data) => {
+    try {
+    let checkUid = await db.Users.findOne({
+        where: { id: uid }
     })
+    let check = await checkUserEmail(data.email);
+    if (check === true) {
+        return ({
+            errCode: 1,
+            errMessage: 'Your email is already in use, please try another email!'
+        })
+    } else if (checkUid) {
+        return ({
+            errCode: 2,
+            errMessage: "User's already exists"
+        })
+    } else {
+        await db.Users.create({
+            id: uid,
+            email: data.email,
+            name: data.name,
+            roleID: 2
+        })
+        return ({
+            errCode: 0,
+            errMessage: 'OK'
+        })
+    }
+    }catch (e) {
+        console.log(e);
+    }
+
 }
 let hashUserPassword = (password) => {
     return new Promise(async(resolve, reject) => {

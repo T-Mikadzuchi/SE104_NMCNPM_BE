@@ -2,7 +2,6 @@
 const {
   Model
 } = require('sequelize');
-import Allcode from '../models/allcode'
 module.exports = (sequelize, DataTypes) => {
   class Users extends Model {
     /**
@@ -19,8 +18,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Users.init({
+    id: {
+      type: DataTypes.STRING,
+      primaryKey: true
+    },
     email: DataTypes.STRING,
-    password: DataTypes.STRING,
     name: DataTypes.STRING,
     dob: DataTypes.DATE,
     phoneNumber: DataTypes.STRING,
