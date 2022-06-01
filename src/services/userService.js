@@ -1,6 +1,7 @@
 import db from "../models/index";
 import bcrypt from 'bcryptjs'
 
+
 var salt = bcrypt.genSaltSync(10);
 
 let handleUserLogin = (email, password) => {
@@ -61,71 +62,52 @@ let checkUserEmail = (userEmail) => {
 let getAllUsers = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let users = '';
-            if (userId === "ALL") {
-                users = await db.Users.findAll({
-                    attributes: {
-                        exclude: ['password', 'createdAt', 'updatedAt', 'address', 'roleID']
-                    },                          
-                    include: [
-                        {
-                            model: db.Allcodes,                            
-                            attributes: ['value'], 
-                            as: 'roleData',
-                            where: { type: 'roleID' }
-                        },
-                        {
-                            model: db.Addresses,
-                            attributes: ['detail', 'province', 'district', 'ward'],
-                            where: {
-                                default: 1
-                            }
+            users = await db.Users.findOne({
+                where: { uid: userId },
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt', 'address', 'roleID']
+                },                          
+                include: [
+                    {
+                        model: db.Allcodes,                            
+                        attributes: ['value'], 
+                        as: 'roleData',
+                        where: { type: 'roleID' }
+                    },
+                    {
+                        model: db.Addresses,
+                        attributes: ['detail', 'province', 'district', 'ward'],
+                        where: {
+                            default: 1
                         }
-                    ],  
-                    raw: true, 
-                    nest: true   
-                })
-            } 
-            else if (userId) {
-                users = await db.Users.findOne({
-                    where: { id: userId },
-                    attributes: {
-                        exclude: ['password', 'createdAt', 'updatedAt', 'address', 'roleID']
-                    },                          
-                    include: [
-                        {
-                            model: db.Allcodes,                            
-                            attributes: ['value'], 
-                            as: 'roleData',
-                            where: { type: 'roleID' }
-                        },
-                        {
-                            model: db.Addresses,
-                            attributes: ['detail', 'province', 'district', 'ward'],
-                            where: {
-                                default: 1
-                            }
-                        }
-                    ],  
-                    raw: true, 
-                    nest: true       
-                })
-            }
+                    }
+                ],  
+                raw: true, 
+                nest: true       
+            })
+            
             resolve(users)
         } catch (e) {
             reject(e);
         }
     })
 }
-// signup function here
-let createNewUser = (data) => {
+let createNewUser = (uid, data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            let checkUid = await db.Users.findOne({
+                where: { id: uid }
+            })
             let check = await checkUserEmail(data.email);
             if (check === true) {
                 resolve({
                     errCode: 1,
                     errMessage: 'Your email is already in use, please try another email!'
+                })
+            } else if (checkUid) {
+                resolve({
+                    errCode: 2,
+                    errMessage: "User's already exists"
                 })
             } else {
                 let hashPasswordFromBcrypt = await hashUserPassword(data.password);
@@ -133,9 +115,6 @@ let createNewUser = (data) => {
                     email: data.email,
                     password: hashPasswordFromBcrypt,
                     name: data.name,
-                    // dob: data.dob,
-                    // phoneNumber: data.phoneNumber,
-                    // gender: data.gender == 1 ? "female" : "male",
                     roleID: 2
                 })
                 resolve({

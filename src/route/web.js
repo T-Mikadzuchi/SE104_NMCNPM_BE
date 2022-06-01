@@ -19,13 +19,12 @@ let initWebRoutes = (app) => {
     // router.post('/put-crud', homeController.putCRUD);
     // router.get('/delete-crud', homeController.deleteCRUD);
 
-    router.post('/api/login', userController.handleLogin);
+    // router.post('/api/login', userController.handleLogin);
     router.get('/api/get-all-users', userController.handleGetAllUsers);
-    // signup api here 
     router.post('/api/create-new-user', userController.handleCreateNewUser);
     router.put('/api/edit-user', userController.handleEditUser);
     //router.delete('/api/delete-user', userController.handleDeleteUser);
-    router.put('/api/change-password', userController.handleChangePassword);
+    // router.put('/api/change-password', userController.handleChangePassword);
 
     router.post('/api/add-new-staff', staffController.handleAddNewStaff);
     router.put('/api/update-staff-status', staffController.handleUpdateStaffStatus);

@@ -1,5 +1,19 @@
 import userService from "../services/userService"
+import middleware from '../middleware'
+import admin from '../config/firebase-config'
 
+let extractUID = async (idToken) => {
+    try {
+        const decodeValue = await admin.auth().verifyIdToken(idToken);
+        if (decodeValue) {
+            console.log(decodeValue)
+            return decodeValue.uid;
+        }
+        return res.json({ message: 'Unauthorize' });
+    } catch (error) {
+        return res.json({ message: 'Internal error' })
+    }
+}
 let handleLogin = async (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
@@ -18,17 +32,19 @@ let handleLogin = async (req, res) => {
         message: userData.errMessage,
         user: userData.user ? userData.user : {}
     })
-}
+} 
 let handleGetAllUsers = async(req, res) => {
-    let id = req.query.id;
-    if (!id) {
+    let idToken = req.headers.authorization;
+    let uid = extractUID(idToken);
+
+    if (!uid) {
         return res.status(200).json({
             errCode: 1,
             errMessage: "Missing required parameters!",
             users: []
         });
     }
-    let users = await userService.getAllUsers(id);
+    let users = await userService.getAllUsers(uid);
     console.log(users);
     return res.status(200).json({
         errCode: 0,
@@ -37,7 +53,11 @@ let handleGetAllUsers = async(req, res) => {
     });
 }
 let handleCreateNewUser = async (req, res) => {
-    let message = await userService.createNewUser(req.body);
+    console.log(req.headers);
+    let idToken = req.headers.authorization;
+    console.log(idToken);
+    let uid = extractUID(idToken);
+    let message = await userService.createNewUser(uid, req.body);
     console.log(message);
     return res.status(200).json(message);
 }

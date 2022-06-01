@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   Bills.init({
-    userID: DataTypes.INTEGER,
+    userID: DataTypes.STRING,
     restaurantID: DataTypes.INTEGER,
     dailyRpID: DataTypes.INTEGER,
     date: DataTypes.DATE,
