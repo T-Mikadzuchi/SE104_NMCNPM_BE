@@ -1,7 +1,7 @@
 import addressService from '../services/addressService'
 
-let handleGetAddress = async(req, res) => {
-    let id = req.body.userId;
+let handleGetAddress = async (req, res) => {
+    let id = req.query.userId;
     if (!id) {
         return res.status(200).json({
             errCode: 1,
@@ -18,7 +18,7 @@ let handleGetAddress = async(req, res) => {
     });
 }
 
-let handleAddAddress = async(req, res) => {
+let handleAddAddress = async (req, res) => {
     let message = await addressService.addNewAddress(req.body);
     console.log(message);
     return res.status(200).json(message);
