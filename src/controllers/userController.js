@@ -4,7 +4,7 @@ import admin from '../config/firebase-config'
 
 let extractUID = async (idToken) => {
     try {
-        const decodeValue = await admin.auth().verifyIdToken(idToken);
+        let decodeValue = await admin.auth().verifyIdToken(idToken);
         if (decodeValue) {
             console.log(decodeValue)
             return decodeValue.uid;
@@ -54,12 +54,16 @@ let handleGetAllUsers = async(req, res) => {
 }
 let handleCreateNewUser = async (req, res) => {
     console.log(req.headers);
-    let idToken = req.headers.authorization;
+    let idToken = req.headers.authorization.split(' ')[1];
     console.log(idToken);
-    let uid = extractUID(idToken);
-    let message = await userService.createNewUser(uid, req.body);
-    console.log(message);
-    return res.status(200).json(message);
+    let uid = await extractUID(idToken);
+    console.log(uid);
+    if (uid) {
+        let message = await userService.createNewUser(uid, req.body);
+        console.log('done')
+        console.log(message);
+        return res.status(200).json(message);
+    }
 }
 let handleDeleteUser = async (req, res) => {
     if (!req.body.id) {
