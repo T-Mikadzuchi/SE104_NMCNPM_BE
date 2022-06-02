@@ -4,20 +4,20 @@ let getAllAddress = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let addresses = '';
-            
+
             addresses = await db.Addresses.findAll({
                 where: {
-                    userID: userId 
+                    userID: userId
                 },
                 include: [
                     {
-                        model: db.Users,                            
-                            
+                        model: db.Users,
+
                     },
                 ],
-                    raw: true, 
-                    nest: true
-            }) 
+                raw: true,
+                nest: true
+            })
             resolve(addresses)
         } catch (e) {
             reject(e);
@@ -47,7 +47,7 @@ let addNewAddress = (data) => {
                 resolve({
                     errCode: 1,
                     errMessage: 'Existed!'
-                });    
+                });
             }
             else {
                 await db.Addresses.create({
@@ -57,7 +57,7 @@ let addNewAddress = (data) => {
                     district: data.district,
                     ward: data.ward,
                     default: 0
-                })                            
+                })
             }
             resolve({
                 errCode: 0,
@@ -65,7 +65,7 @@ let addNewAddress = (data) => {
             });
         }
         catch (e) {
-            reject (e);
+            reject(e);
         }
     })
 }
@@ -73,5 +73,5 @@ let addNewAddress = (data) => {
 module.exports = {
     getAllAddress: getAllAddress,
     addNewAddress: addNewAddress
-    
+
 }
