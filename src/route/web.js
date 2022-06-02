@@ -39,6 +39,8 @@ let initWebRoutes = (app) => {
 
     router.get('/api/get-address', addressController.handleGetAddress);
     router.post('/api/add-address', addressController.handleAddAddress);
+    router.delete('/api/delete-address', addressController.handleDeleteAddress);
+    router.put('/api/update-address', addressController.handleUpdateAddress);
 
     router.get('/api/get-restaurant', restaurantController.handleGetRestaurant);
 
