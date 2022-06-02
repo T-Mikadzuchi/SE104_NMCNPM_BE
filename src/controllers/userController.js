@@ -9,9 +9,12 @@ let extractUID = async (idToken) => {
             console.log(decodeValue)
             return decodeValue.uid;
         }
-        return res.json({ message: 'Unauthorize' });
+        console.log("Unauthorize")
+        return null;
     } catch (error) {
-        return res.json({ message: 'Internal error' })
+        console.log('Internal error')
+        console.log(error)
+        return null;
     }
 }
 let handleLogin = async (req, res) => {
@@ -33,9 +36,10 @@ let handleLogin = async (req, res) => {
         user: userData.user ? userData.user : {}
     })
 } 
-let handleGetAllUsers = async(req, res) => {
-    let idToken = req.headers.authorization;
-    let uid = extractUID(idToken);
+let handleGetUserProfile = async(req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+    console.log(uid)
 
     if (!uid) {
         return res.status(200).json({
@@ -44,7 +48,7 @@ let handleGetAllUsers = async(req, res) => {
             users: []
         });
     }
-    let users = await userService.getAllUsers(uid);
+    let users = await userService.getUser(uid);
     console.log(users);
     return res.status(200).json({
         errCode: 0,
@@ -53,14 +57,11 @@ let handleGetAllUsers = async(req, res) => {
     });
 }
 let handleCreateNewUser = async (req, res) => {
-    console.log(req.headers);
     let idToken = req.headers.authorization.split(' ')[1];
-    console.log(idToken);
     let uid = await extractUID(idToken);
-    console.log(uid);
+
     if (uid) {
         let message = await userService.createNewUser(uid, req.body);
-        console.log('done')
         console.log(message);
         return res.status(200).json(message);
     }
@@ -77,9 +78,14 @@ let handleDeleteUser = async (req, res) => {
     return res.status(200).json(message);
 }
 let handleEditUser = async (req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
     let data = req.body;
-    let message = await userService.updateUserData(data);
-    return res.status(200).json(message);
+    if (uid) {
+        console.log(uid)
+        let message = await userService.updateUserData(uid, data);
+        return res.status(200).json(message);
+    }
 }
 let getAllcode = async (req, res) => {
     try {
@@ -102,8 +108,7 @@ let handleChangePassword = async (req, res) => {
 
 module.exports = {
     handleLogin: handleLogin,
-    handleGetAllUsers: handleGetAllUsers,
-    handleCreateNewUser: handleGetAllUsers,
+    handleGetUserProfile: handleGetUserProfile,
     handleCreateNewUser: handleCreateNewUser,
     handleEditUser: handleEditUser,
     handleDeleteUser: handleDeleteUser,

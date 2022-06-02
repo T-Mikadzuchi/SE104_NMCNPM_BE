@@ -56,38 +56,41 @@ let checkUserEmail = async(userEmail) => {
         console.log(e);
     }
 }
-let getAllUsers = (userId) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            users = await db.Users.findOne({
-                where: { uid: userId },
-                attributes: {
-                    exclude: ['createdAt', 'updatedAt', 'address', 'roleID']
-                },                          
-                include: [
-                    {
-                        model: db.Allcodes,                            
-                        attributes: ['value'], 
-                        as: 'roleData',
-                        where: { type: 'roleID' }
-                    },
-                    {
-                        model: db.Addresses,
-                        attributes: ['detail', 'province', 'district', 'ward'],
-                        where: {
-                            default: 1
-                        }
+let getUser = async (userId) => {
+    try {
+        let users = await db.Users.findOne({
+            where: { id: userId }
+        })
+        if (!users) return "no user"
+
+        users = await db.Users.findOne({
+            where: { id: userId },
+            attributes: {
+                exclude: ['createdAt', 'updatedAt', 'address', 'roleID']
+            },                          
+            include: [
+                {
+                    model: db.Allcodes,                            
+                    attributes: ['value'], 
+                    as: 'roleData',
+                    where: { type: 'roleID' }
+                },
+                {
+                    model: db.Addresses,
+                    attributes: ['detail', 'province', 'district', 'ward'],
+                    where: {
+                        default: 1
                     }
-                ],  
-                raw: true, 
-                nest: true       
-            })
-            
-            resolve(users)
-        } catch (e) {
-            reject(e);
-        }
-    })
+                }
+            ],  
+            raw: true, 
+            nest: true       
+        })
+        return(users)
+    } catch (e) {
+        console.log(e);
+    }
+
 }
 let createNewUser = async (uid, data) => {
     try {
@@ -106,11 +109,15 @@ let createNewUser = async (uid, data) => {
             errMessage: "User's already exists"
         })
     } else {
-        await db.Users.create({
+        let user = await db.Users.create({
             id: uid,
             email: data.email,
             name: data.name,
             roleID: 2
+        })
+        await db.Addresses.create({
+            userID: user.id,
+            default: 1
         })
         return ({
             errCode: 0,
@@ -156,70 +163,59 @@ let deleteUser = (userId) => {
         }
     })
 }
-let updateUserData = (data) => {
+let updateUserData = (uid, data) => {
     return new Promise(async(resolve, reject) => {
         try {
-            if (!data.id) {
-                resolve({
-                    errCode: 2,
-                    errMessage: 'Missing required parameters'
-                })
-            }
+            // if (!data.id) {
+            //     resolve({
+            //         errCode: 2,
+            //         errMessage: 'Missing required parameters'
+            //     })
+            // }
             let user = await db.Users.findOne({
-                where: {id: data.id},
+                where: {id: uid},
                 //raw: false
             })
             if (user) { 
-                
-                // let currentAddress = await db.Addresses.findOne({
-                //     where: { userID: data.id, default: 1 }
-                // })
                 await db.Users.update({
                     name: data.name,
                     dob: data.dob,
                     phoneNumber: data.phoneNumber,
                     gender: data.gender,
                     avatar: data.avatar,
-                }, { where : {id: data.id}});
-
-                // if (currentAddress.detail === data.detail && currentAddress.province === data.province
-                //     && currentAddress.district === data.district && currentAddress.ward === data.ward)  {
-
-                //     } else {
-                        let checkAddress = await db.Addresses.findOne({
-                            where: {
-                                userID: data.id,
-                                detail: data.detail,
-                                province: data.province,
-                                district: data.district,
-                                ward: data.ward
-                            }
-                        });
-                        await db.Addresses.update({
-                            default: 0,
-                        }, { where: { default: 1, userID: data.id }})
-                        if (checkAddress) {
-                            await db.Addresses.update({
-                                default: 1,                                
-                            }, { where: { id: checkAddress.id }})
-                            await db.Users.update({
-                                address: checkAddress.id,                                
-                            }, { where: { id: data.id }})
-                        }
-                        else {
-                            let newAddress = await db.Addresses.create({
-                                userID: data.id,
-                                detail: data.detail,
-                                province: data.province,
-                                district: data.district,
-                                ward: data.ward,
-                                default: 1
-                            })                            
-                            await db.Users.update({
-                                address: newAddress.id,                                
-                            }, { where: { id: data.id }})
-                        //}
+                }, { where : {id: uid}});
+                let checkAddress = await db.Addresses.findOne({
+                    where: {
+                        userID: uid,
+                        default: 1
                     }
+                });
+                if (checkAddress) {
+                    await db.Addresses.update({
+                        name: data.name,
+                        phone: data.phoneNumber,
+                        detail: data.detail,
+                        province: data.province,
+                        district: data.district,
+                        ward: data.ward,                    
+                    }, { where: { id: checkAddress.id }})
+                    await db.Users.update({
+                        address: checkAddress.id,                                
+                    }, { where: { id: uid }})
+                }
+                else {
+                    let newAddress = await db.Addresses.create({
+                        userID: uid,
+                        detail: data.detail,
+                        province: data.province,
+                        district: data.district,
+                        ward: data.ward,
+                        default: 1
+                    })                            
+                    await db.Users.update({
+                        address: newAddress.id,                                
+                    }, { where: { id: uid }})
+                }
                 resolve({
                     errCode: 0,
                     errMessage: 'Update user succeeded!'
@@ -283,7 +279,7 @@ let changePassword = (data) => {
 
 module.exports = {
     handleUserLogin: handleUserLogin,
-    getAllUsers: getAllUsers,
+    getUser: getUser,
     createNewUser: createNewUser,
     deleteUser: deleteUser,
     updateUserData: updateUserData,
