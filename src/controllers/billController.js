@@ -1,23 +1,47 @@
 import billService from '../services/billService'
+import admin from '../config/firebase-config'
 
+let extractUID = async (idToken) => {
+    try {
+        let decodeValue = await admin.auth().verifyIdToken(idToken);
+        if (decodeValue) {
+            console.log(decodeValue)
+            return decodeValue.uid;
+        }
+        console.log("Unauthorize")
+        return null;
+    } catch (error) {
+        console.log('Internal error')
+        console.log(error)
+        return null;
+    }
+}
 let handleCreateBill = async (req, res) => {
-    let message = await billService.createBill(req.body);
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+
+    let message = await billService.createBill(uid);
     return res.status(200).json(message);
 }
 let handleAddItemToCart = async (req, res) => {
-    let message = await billService.addItemToCart(req.body);
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+
+    let message = await billService.addItemToCart(uid, req.body);
     return res.status(200).json(message);
 }
 let handleDisplayCart = async(req, res) => {
-    let id = req.query.id;
-    if (!id) {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+
+    if (!uid) {
         return res.status(200).json({
             errCode: 1,
             errMessage: "Missing required parameters!",
             cartItems: []
         });
     }
-    let cartItems = await billService.displayCart(id);
+    let cartItems = await billService.displayCart(uid);
     console.log(cartItems);
     return res.status(200).json({
         errCode: 0,
@@ -26,30 +50,37 @@ let handleDisplayCart = async(req, res) => {
     });
 }
 let handleUpdateCartItem = async(req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
     let data = req.body;
-    let message = await billService.updateCartItem(data);
+    let message = await billService.updateCartItem(uid, data);
     return res.status(200).json(message);
 }
 let handleDeleteCartItem = async(req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
     let data = req.body;
-    let message = await billService.deleteCartItem(data);
+    let message = await billService.deleteCartItem(uid, data);
     return res.status(200).json(message);
 }
 let handlePurchase = async(req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
     let data = req.body;
-    let message = await billService.purchase(data);
+    let message = await billService.purchase(uid, data);
     return res.status(200).json(message);
 }
 let handleDisplayOrder = async(req, res) => {
-    let id = req.query.id;
-    if (!id) {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+    if (!uid) {
         return res.status(200).json({
             errCode: 1,
             errMessage: "Missing required parameters!",
             orders: []
         });
     }
-    let orders = await billService.displayOrder(id);
+    let orders = await billService.displayOrder(uid);
     console.log(orders);
     return res.status(200).json({
         errCode: 0,
@@ -58,7 +89,7 @@ let handleDisplayOrder = async(req, res) => {
     });
 }
 let handleDisplayOrderItems = async(req, res) => {
-    let id = req.body.id;
+    let id = req.query.id;
     if (!id) {
         return res.status(200).json({
             errCode: 1,
@@ -75,30 +106,32 @@ let handleDisplayOrderItems = async(req, res) => {
     });
 }
 let handleConfirmOrder = async(req, res) => {
-    let id = req.body.id;
+    let id = req.query.id;
     let message = await billService.confirmOrder(id);
     return res.status(200).json(message);
 }
 let handleCancelOrder = async(req, res) => {
+    let id = req.query.id;
     let data = req.body;
-    let message = await billService.cancelOrder(data);
+    let message = await billService.cancelOrder(id, data);
     return res.status(200).json(message);
 }
 let handleConfirmDelivered = async(req, res) => {
-    let data = req.body;
+    let data = req.query.id;
     let message = await billService.confirmDelivered(data);
     return res.status(200).json(message);
 }
 let handleGetAllOrders = async(req, res) => {
-    let id = req.query.id;
-    if (!id) {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+    if (!uid) {
         return res.status(200).json({
             errCode: 1,
             errMessage: "Missing required parameters!",
             orders: []
         });
     }
-    let orders = await billService.getAllOrders(id);
+    let orders = await billService.getAllOrders(uid);
     console.log(orders);
     return res.status(200).json({
         errCode: 0,

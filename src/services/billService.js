@@ -1,11 +1,11 @@
 import { Op, QueryTypes } from 'sequelize';
 import db, { Sequelize, sequelize } from "../models/index";
 
-let createBill = (data) => {
+let createBill = (uid) => {
     return new Promise(async (resolve, reject) => {
         try {
             let user = await db.Users.findOne({
-                where: { id: data.userID }
+                where: { id: uid }
             })
             if (!user) 
                 resolve({
@@ -14,7 +14,7 @@ let createBill = (data) => {
                 })
             let checkBillExist = await db.Bills.findOne({
                 where: {
-                    userID: user.id,
+                    userID: uid,
                     billstatus: 0
                 }
             })
@@ -25,7 +25,7 @@ let createBill = (data) => {
                 })
             } else {
                 let bill = await db.Bills.create({
-                    userID: data.userID,
+                    userID: uid,
                     // restaurantID: data.restaurantID,
                     // dailyRpID: dailyRpCheck.id,
                     total: 20000,
@@ -39,15 +39,15 @@ let createBill = (data) => {
         }
     })
 }
-let addItemToCart = (data) => {
+let addItemToCart = (uid, data) => {
     return new Promise(async (resolve, reject) => {
         try {            
-            if (!data.userID || !data.itemID || !data.number) 
+            if (!uid || !data.itemID || !data.number) 
             resolve({
                 errCode: 2,
                 errMessage: "Missing required parameter"
             })
-            await createBill(data);
+            await createBill(uid);
             let bill = await db.Bills.findOne({
                 where: { userID: data.userID, billstatus: 0 }
             })
@@ -104,14 +104,12 @@ let displayCart = async(userId) => {
 
     let date = new Date()
     let promotionCheck = await db.Promotions.findOne({
-        // where: {
-            [Op.and]: [
-                sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),
-                sequelize.where(sequelize.fn('date', sequelize.col('end')), '>=', date)
-            ]
-        // }
+        [Op.and]: [
+            sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),
+            sequelize.where(sequelize.fn('date', sequelize.col('end')), '>=', date)
+        ]
     })   
-
+    console.log(promotionCheck);
     let promotion = 0;
     if (promotionCheck)
         promotion = promotionCheck.value;
@@ -138,20 +136,20 @@ let displayCart = async(userId) => {
     }
     return cartinfo
 }
-let updateCartItem = async (data) => {
-    if (!data.userID || !data.itemID) {
+let updateCartItem = async (uid, data) => {
+    if (!uid || !data.itemID) {
         return ({
             errCode: 1,
             errMessage: 'Missing required parameter'
         })
     }
     let user = await db.Users.findOne({
-        where: {id: data.userID},
+        where: {id: uid},
     })
     if (user) {
         let bill = await db.Bills.findOne({
             where: {
-                userID: data.userID,
+                userID: uid,
                 billstatus: 0
             }
         })
@@ -192,20 +190,20 @@ let updateCartItem = async (data) => {
         });
     }
 }
-let deleteCartItem = async (data) => {
-    if (!data.userID || !data.itemID) {
+let deleteCartItem = async (uid, data) => {
+    if (!uid || !data.itemID) {
         return ({
             errCode: 1,
             errMessage: 'Missing required parameter'
         })
     }
     let user = await db.Users.findOne({
-        where: {id: data.userID},
+        where: {id: uid},
     })
     if (user) {
         let bill = await db.Bills.findOne({
             where: {
-                userID: data.userID,
+                userID: uid,
                 billstatus: 0
             }
         })
@@ -237,8 +235,8 @@ let deleteCartItem = async (data) => {
     }
     else return "User's not exists"
 }
-let purchase = async(data) => {
-    if (!data.userID || !data.restaurantID || !data.payment || !data.phoneNumber || !data.address
+let purchase = async(uid, data) => {
+    if (!uid || !data.restaurantID || !data.payment || !data.phoneNumber || !data.address
         || !data.province || !data.district || !data.ward) 
         return { 
             errCode: 1,
@@ -246,7 +244,7 @@ let purchase = async(data) => {
         }
     const cart = await db.Bills.findOne({
         where: {
-            userID: data.userID,
+            userID: uid,
             billstatus: 0
         }
     })
@@ -400,24 +398,24 @@ let confirmOrder = async(billID) => {
     }, { where: { id: billID }})
     return 'Order confirmed'
 }
-let cancelOrder = async (data) => {
-    if (!data.id) 
+let cancelOrder = async (id, data) => {
+    if (!id) 
     return "Pls pick an order"
     let bill = await db.Bills.findOne({
-        where: { id: data.id }
+        where: { id: id }
     })
     if (!bill || bill.billstatus == 0 || bill.billstatus > 2) return 'wtf'
     await db.Bills.update({
         billstatus: 4,
         note: data.note
-    }, {where: { id: data.id }})
+    }, {where: { id: id }})
     return 'Cancel completed'
 }
-let confirmDelivered = async(data) => {
-    if (!data.id) 
+let confirmDelivered = async(id) => {
+    if (!id) 
     return "Pls pick an order"
     let bill = await db.Bills.findOne({
-        where: { id: data.id }
+        where: { id: id }
     })
     if (!bill || bill.billstatus != 2) return 'wtf'
     let date = new Date()
@@ -463,7 +461,7 @@ let confirmDelivered = async(data) => {
         billstatus: 3,
         date: date,
         dailyRpID: dailyRpCheck.id
-    }, {where: { id: data.id }})
+    }, {where: { id: id }})
     await db.DailyReports.increment({
         revenue: bill.total,
         billCount: 1
