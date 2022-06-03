@@ -49,7 +49,7 @@ let addItemToCart = (uid, data) => {
             })
             await createBill(uid);
             let bill = await db.Bills.findOne({
-                where: { userID: data.userID, billstatus: 0 }
+                where: { userID: uid, billstatus: 0 }
             })
             if (!bill) {
                 resolve({
