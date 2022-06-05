@@ -89,15 +89,18 @@ let handleDisplayOrder = async(req, res) => {
     });
 }
 let handleDisplayOrderItems = async(req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+
     let id = req.query.id;
-    if (!id) {
+    if (!id || !uid) {
         return res.status(200).json({
             errCode: 1,
             errMessage: "Missing required parameters!",
             items: []
         });
     }
-    let items = await billService.displayOrderItems(id);
+    let items = await billService.displayOrderItems(uid, id);
     console.log(items);
     return res.status(200).json({
         errCode: 0,
@@ -106,19 +109,26 @@ let handleDisplayOrderItems = async(req, res) => {
     });
 }
 let handleConfirmOrder = async(req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+
     let id = req.query.id;
-    let message = await billService.confirmOrder(id);
+    let message = await billService.confirmOrder(uid, id);
     return res.status(200).json(message);
 }
 let handleCancelOrder = async(req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
     let id = req.query.id;
     let data = req.body;
-    let message = await billService.cancelOrder(id, data);
+    let message = await billService.cancelOrder(uid, id, data);
     return res.status(200).json(message);
 }
 let handleConfirmDelivered = async(req, res) => {
-    let data = req.query.id;
-    let message = await billService.confirmDelivered(data);
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+    let id = req.query.id;
+    let message = await billService.confirmDelivered(uid, id);
     return res.status(200).json(message);
 }
 let handleGetAllOrders = async(req, res) => {

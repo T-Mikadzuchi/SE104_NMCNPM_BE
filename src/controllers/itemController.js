@@ -1,4 +1,21 @@
 import itemService from '../services/itemService'
+import admin from '../config/firebase-config'
+
+let extractUID = async (idToken) => {
+    try {
+        let decodeValue = await admin.auth().verifyIdToken(idToken);
+        if (decodeValue) {
+            console.log(decodeValue)
+            return decodeValue.uid;
+        }
+        console.log("Unauthorize")
+        return null;
+    } catch (error) {
+        console.log('Internal error')
+        console.log(error)
+        return null;
+    }
+}
 
 let handleSearchItem = async (req, res) => {
     let itemSearch = req.query.search;
@@ -19,8 +36,11 @@ let handleSearchItem = async (req, res) => {
 }
 
 let handleUpdateItem = async (req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+
     let data = req.body;
-    let message = await itemService.updateItem(data);
+    let message = await itemService.updateItem(uid, data);
     return res.status(200).json(message);
 }
 
@@ -43,7 +63,10 @@ let handleGetItem = async (req, res) => {
 }
 
 let handleAddItem = async (req, res) => {
-    let message = await itemService.addNewItem(req.body);
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+
+    let message = await itemService.addNewItem(uid, req.body);
     console.log(message);
     return res.status(200).json(message);
 }
