@@ -147,6 +147,7 @@ let updateCartItem = async (uid, data) => {
         where: {id: uid},
     })
     if (user) {
+        console.log('found user')
         let bill = await db.Bills.findOne({
             where: {
                 userID: uid,
@@ -159,6 +160,7 @@ let updateCartItem = async (uid, data) => {
                 errMessage: "Cart's not exist",
             });
         }
+        console.log('found cart')
         let itemInCart = await db.BillDetails.findOne({
             where : {
                 billID: bill.id,
@@ -174,6 +176,7 @@ let updateCartItem = async (uid, data) => {
         let priceCheck = await db.Items.findOne({
             where: { id: data.itemID }
         });
+        if (priceCheck) console.log('found item')
         let price = priceCheck.price;
         await db.BillDetails.update({
             number: data.number,
@@ -352,8 +355,13 @@ let purchase = async(uid, data) => {
 }
 //for staff only
 let displayOrder = async(userID) => {
-    const staff = await db.Staffs.findOne({
-        where: { userID: userID, staffstatus: 1 }
+    const staff = await db.Users.findOne({
+        where: { 
+            id: userID, 
+            roleID: {
+                [Op.or] : [1, 0]
+            }
+        }
     })
     if (!staff) return {
         errCode: 1,
@@ -366,12 +374,27 @@ let displayOrder = async(userID) => {
     })
     return orders
 } 
-let displayOrderItems = async(billID) => {
+let displayOrderItems = async(uid, billID) => {
     const order = await db.Bills.findOne({
         where: { id: billID }
     })
     if (!order) return 'hmu'
-
+    const user = await db.Users.findOne({
+        where: { id: uid }
+    })
+    if (user.roleID == 2) {
+        if (order.userID != uid) return "You can't view this order"
+    } 
+    else {
+        const staff = await db.Staffs.findOne({
+            where: { 
+                restaurantID: order.restaurantID,
+                userID: uid
+            }
+        })
+        if (!staff) return "You can't view this order"
+    }
+    
     let orderItems = await db.BillDetails.findAll({
         where: { billID: billID },
         attributes: {
@@ -386,7 +409,20 @@ let displayOrderItems = async(billID) => {
     })
     return orderItems
 }
-let confirmOrder = async(billID) => {
+let confirmOrder = async(uid, billID) => {
+    const user = await db.Users.findOne({
+        where: { id: uid }
+    })
+    if (user.roleID != 2) {
+        const staff = await db.Staffs.findOne({
+            where: { 
+                restaurantID: order.restaurantID,
+                userID: uid
+            }
+        })
+        if (!staff) return "You don't have permission to access"
+    } else return "You don't have permission to access"
+
     if (!billID) 
         return "Pls pick an order"
     let bill = await db.Bills.findOne({
@@ -398,26 +434,58 @@ let confirmOrder = async(billID) => {
     }, { where: { id: billID }})
     return 'Order confirmed'
 }
-let cancelOrder = async (id, data) => {
+let cancelOrder = async (uid, id, data) => {
     if (!id) 
     return "Pls pick an order"
     let bill = await db.Bills.findOne({
         where: { id: id }
     })
-    if (!bill || bill.billstatus == 0 || bill.billstatus > 2) return 'wtf'
+    if (!bill) return 'wtf'
+    const user = await db.Users.findOne({
+        where: { id: uid }
+    })
+    if (user.roleID == 2) {
+        if (bill.userID != uid) return "You can't view this order"
+    } 
+    if (user.roleID == 1) {
+        const staff = await db.Staffs.findOne({
+            where: { 
+                restaurantID: bill.restaurantID,
+                userID: uid
+            }
+        })
+        if (!staff) return "You can't view this order"
+    }
+    if (bill.billstatus == 0 || bill.billstatus > 2) return "You can't cancel this"
     await db.Bills.update({
         billstatus: 4,
         note: data.note
-    }, {where: { id: id }})
+    }, { where: { id: id } })
     return 'Cancel completed'
 }
-let confirmDelivered = async(id) => {
+let confirmDelivered = async(uid, id) => {
     if (!id) 
     return "Pls pick an order"
     let bill = await db.Bills.findOne({
         where: { id: id }
     })
-    if (!bill || bill.billstatus != 2) return 'wtf'
+    if (!bill) return 'wtf'
+    const user = await db.Users.findOne({
+        where: { id: uid }
+    })
+    if (user.roleID == 2) {
+        if (bill.userID != uid) return "You can't view this order"
+    } 
+    if (user.roleID == 1) {
+        const staff = await db.Staffs.findOne({
+            where: { 
+                restaurantID: bill.restaurantID,
+                userID: uid
+            }
+        })
+        if (!staff) return "You can't view this order"
+    }
+    if (bill.billstatus != 2) return 'wtf'
     let date = new Date()
     let salesRpCheck = await db.SalesReports.findOne({
         where: {

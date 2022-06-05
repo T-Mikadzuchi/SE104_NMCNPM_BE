@@ -44,9 +44,19 @@ let searchItem = (itemSearch) => {
     })
 }
 
-let updateItem = (data) => {
+let updateItem = (uid, data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            const admin = await db.Users.findOne({
+                where: { 
+                    id: uid, 
+                    roleID: 0
+                }
+            })
+            if (!admin) resolve ({
+                errCode: 1,
+                errMessage: "You don't have permission to access"
+            })
             if (!data.id) {
                 resolve({
                     errCode: 2,
@@ -71,7 +81,7 @@ let updateItem = (data) => {
                 })
             } else {
                 resolve({
-                    errCode: 1,
+                    errCode: 3,
                     errMessage: "Item's not found!"
                 });
             }
@@ -184,9 +194,19 @@ let getItemSortByType = (data) => {
     return items
 }
 
-let addNewItem = (data) => {
+let addNewItem = (uid, data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            const admin = await db.Users.findOne({
+                where: { 
+                    id: uid, 
+                    roleID: 0
+                }
+            })
+            if (!admin) resolve ({
+                errCode: 1,
+                errMessage: "You don't have permission to access"
+            })
             if (!data.itemName || !data.type || !data.itemImage || !data.price || !data.calories || (data.featured != 0 && data.featured != 1)) {
                 resolve({
                     errCode: 2,
@@ -206,8 +226,8 @@ let addNewItem = (data) => {
             });
             if (checkItem.length !=0) {
                 resolve({
-                    errCode: 1,
-                    errMessage: 'Existed!'
+                    errCode: 3,
+                    errMessage: 'Item exist!'
                 });
             }
                 let newItem = await db.Items.create({                    
