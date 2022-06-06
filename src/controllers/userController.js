@@ -1,5 +1,4 @@
 import userService from "../services/userService"
-import middleware from '../middleware'
 import admin from '../config/firebase-config'
 
 let extractUID = async (idToken) => {
@@ -39,7 +38,6 @@ let handleLogin = async (req, res) => {
 let handleGetUserProfile = async(req, res) => {
     let idToken = req.headers.authorization.split(' ')[1];
     let uid = await extractUID(idToken);
-    console.log(uid)
 
     if (!uid) {
         return res.status(200).json({
@@ -105,6 +103,45 @@ let handleChangePassword = async (req, res) => {
     let message = await userService.changePassword(data);
     return res.status(200).json(message);
 }
+let handleGetAllUsers = async(req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+
+    if (!uid) {
+        return res.status(200).json({
+            errCode: 1,
+            errMessage: "Missing required parameters!",
+            users: []
+        });
+    }
+    let users = await userService.getAllUsers(uid);
+    console.log(users);
+    return res.status(200).json({
+        errCode: 0,
+        errMessage: "OK",
+        users
+    });
+}
+let handleSearchUsersByEmail = async (req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+
+    if (!uid) {
+        return res.status(200).json({
+            errCode: 1,
+            errMessage: "Missing required parameters!",
+            users: []
+        });
+    }
+    let search = req.query.search;
+    let users = await userService.searchUsersByEmail(uid, search);
+    console.log(users);
+    return res.status(200).json({
+        errCode: 0,
+        errMessage: "OK",
+        users
+    });
+}
 
 module.exports = {
     handleLogin: handleLogin,
@@ -114,4 +151,6 @@ module.exports = {
     handleDeleteUser: handleDeleteUser,
     getAllcode: getAllcode,
     handleChangePassword: handleChangePassword,
+    handleGetAllUsers: handleGetAllUsers,
+    handleSearchUsersByEmail: handleSearchUsersByEmail,
 }

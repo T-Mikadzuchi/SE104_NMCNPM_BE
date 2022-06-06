@@ -1,7 +1,4 @@
 import db from "../models/index";
-import bcrypt from 'bcryptjs'
-
-var salt = bcrypt.genSaltSync(10);
 
 let checkUserEmail = (userEmail) => {
     return new Promise(async (resolve, reject) => {
@@ -20,37 +17,33 @@ let checkUserEmail = (userEmail) => {
     })
 }
 
-let hashUserPassword = (password) => {
-    return new Promise(async(resolve, reject) => {
-        try {
-            let hashPassword = await bcrypt.hashSync(password, salt);
-            resolve(hashPassword);
-        } catch (e) {
-            reject(e);
-        }
-    })
-}
-
-let addNewStaff = (data) => {
+let addNewStaff = (uid, data) => {
     return new Promise(async (resolve, reject) => {
         try {
+            const checkRole = await db.Users.findOne({
+                where: { id: uid }
+            })
+            if (!checkRole) return "no user"
+            if (checkRole.roleID != 0) return "You don't have permission to access"
             let check = await checkUserEmail(data.email);
-            if (check === true) {
+            if (check === false) {
                 resolve({
                     errCode: 1,
-                    errMessage: 'This email is already in use, please try another email!'
+                    errMessage: "User's not exist"
                 })
             } else {
-                let hashPasswordFromBcrypt = await hashUserPassword('user1234');
-                let newStaff = await db.Users.create({
-                    email: data.email,
-                    password: hashPasswordFromBcrypt,
-                    name: data.name,
-                    roleID: 1
-                });
-                // var today = new Date();
+                let user = await db.Users.findOne({
+                    where: { email: data.email }
+                })
+                let staff = await db.Staffs.findOne({
+                    where: { userID: user.id }
+                })
+                if (staff) resolve({
+                    errCode: 2,
+                    errMessage: "Staff exists"
+                })
                 await db.Staffs.create({
-                    userID: newStaff.id,
+                    userID: user.id,
                     restaurantID: data.restaurantID,
                     workingDay: Date.now(),
                     staffStatus: 1
@@ -66,23 +59,28 @@ let addNewStaff = (data) => {
     })
 }
 
-let updateStaffStatus = (data) => {
+let updateStaffStatus = (uid, id, data) => {
     return new Promise(async (resolve, reject) => {
         try {
-            if (!data.id) {
+            const checkRole = await db.Users.findOne({
+                where: { id: uid }
+            })
+            if (!checkRole) return "no user"
+            if (checkRole.roleID != 0) return "You don't have permission to access"
+            if (!id) {
                 resolve({
                     errCode: 2,
                     errMessage: 'Missing required parameters'
                 })
             }
             let staff = await db.Staffs.findOne({
-                where: { id: data.id }
+                where: { id: id }
             })
             if (staff) {
                 await db.Staffs.update({
                     staffStatus: data.staffStatus
 
-                }, { where: { id: data.id }})
+                }, { where: { id: id }})
                 resolve({
                     errCode: 0,
                     errMessage: "Status updated successfully!"

@@ -355,7 +355,7 @@ let purchase = async(uid, data) => {
 }
 //for staff only
 let displayOrder = async(userID) => {
-    const staff = await db.Users.findOne({
+    const checkRole = await db.Users.findOne({
         where: { 
             id: userID, 
             roleID: {
@@ -363,10 +363,17 @@ let displayOrder = async(userID) => {
             }
         }
     })
-    if (!staff) return {
+    if (!checkRole) return {
         errCode: 1,
         errMessage: "You don't have permission to access"
     }
+    const staff = await db.staff.findOne({
+        where: {
+            userID: userID,
+            staffStatus: 1
+        }
+    })
+    if (!staff) return "no staff"
     let orders = await db.Bills.findAll({
         where: {
             restaurantID: staff.restaurantID,
@@ -389,7 +396,8 @@ let displayOrderItems = async(uid, billID) => {
         const staff = await db.Staffs.findOne({
             where: { 
                 restaurantID: order.restaurantID,
-                userID: uid
+                userID: uid,
+                staffStatus: 1
             }
         })
         if (!staff) return "You can't view this order"
@@ -410,25 +418,27 @@ let displayOrderItems = async(uid, billID) => {
     return orderItems
 }
 let confirmOrder = async(uid, billID) => {
-    const user = await db.Users.findOne({
-        where: { id: uid }
-    })
-    if (user.roleID != 2) {
-        const staff = await db.Staffs.findOne({
-            where: { 
-                restaurantID: order.restaurantID,
-                userID: uid
-            }
-        })
-        if (!staff) return "You don't have permission to access"
-    } else return "You don't have permission to access"
-
     if (!billID) 
         return "Pls pick an order"
     let bill = await db.Bills.findOne({
         where: { id: billID }
     })
-    if (!bill || bill.billstatus != 1) return 'wtf'
+    if (!bill) return 'hmu'
+    const user = await db.Users.findOne({
+        where: { id: uid }
+    })
+    if (!user) return "no user"
+    if (user.roleID != 2) {
+        const staff = await db.Staffs.findOne({
+            where: { 
+                restaurantID: order.restaurantID,
+                userID: uid,
+                staffStatus: 1
+            }
+        })
+        if (!staff) return "You don't have permission to access"
+    } else return "You don't have permission to access"
+    if (bill.billstatus != 1) return 'wtf'
     await db.Bills.update({
         billstatus: 2
     }, { where: { id: billID }})
@@ -444,6 +454,7 @@ let cancelOrder = async (uid, id, data) => {
     const user = await db.Users.findOne({
         where: { id: uid }
     })
+    if (!user) return "no user"
     if (user.roleID == 2) {
         if (bill.userID != uid) return "You can't view this order"
     } 
@@ -451,7 +462,8 @@ let cancelOrder = async (uid, id, data) => {
         const staff = await db.Staffs.findOne({
             where: { 
                 restaurantID: bill.restaurantID,
-                userID: uid
+                userID: uid,
+                staffStatus: 1
             }
         })
         if (!staff) return "You can't view this order"
@@ -473,6 +485,7 @@ let confirmDelivered = async(uid, id) => {
     const user = await db.Users.findOne({
         where: { id: uid }
     })
+    if (!user) return 'no user'
     if (user.roleID == 2) {
         if (bill.userID != uid) return "You can't view this order"
     } 
