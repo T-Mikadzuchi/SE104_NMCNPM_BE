@@ -276,6 +276,74 @@ let changePassword = (data) => {
         }
     })
 }
+let getAllUsers = async(uid) => {
+    const user = await db.Users.findOne({
+        where: { id: uid }
+    })
+    if (!user) return "no user"
+    if (user.roleID != 0) {
+        return "You don't have permission to access"
+    } 
+    let users = db.Users.findAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt', 'address', 'roleID']
+        },                          
+        include: [
+            {
+                model: db.Allcodes,                            
+                attributes: ['value'], 
+                as: 'roleData',
+                where: { type: 'roleID' }
+            },
+            {
+                model: db.Addresses,
+                attributes: ['detail', 'province', 'district', 'ward'],
+                where: {
+                    default: 1
+                }
+            }
+        ],  
+        raw: true, 
+        nest: true  
+    })
+    return users;
+}
+let searchUsersByEmail = async(uid, search) => {
+    const user = await db.Users.findOne({
+        where: { id: uid }
+    })
+    if (!user) return "no user"
+    if (user.roleID != 0) {
+        return "You don't have permission to access"
+    } 
+    let users = db.Users.findAll({
+        where: {
+            email: sequelize.where(sequelize.fn('LOWER', sequelize.col('email')),
+             'LIKE', '%' + search.toLowerCase() + '%')
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt', 'address']
+        },                          
+        include: [
+            {
+                model: db.Allcodes,                            
+                attributes: ['value'], 
+                as: 'roleData',
+                where: { type: 'roleID' }
+            },
+            {
+                model: db.Addresses,
+                attributes: ['detail', 'province', 'district', 'ward'],
+                where: {
+                    default: 1
+                }
+            }
+        ],  
+        raw: true, 
+        nest: true  
+    })
+    return users;
+}
 
 module.exports = {
     handleUserLogin: handleUserLogin,
@@ -285,4 +353,6 @@ module.exports = {
     updateUserData: updateUserData,
     getAllcodeService: getAllcodeService,
     changePassword: changePassword,
+    getAllUsers: getAllUsers,
+    searchUsersByEmail: searchUsersByEmail
 }
