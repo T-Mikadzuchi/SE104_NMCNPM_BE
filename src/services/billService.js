@@ -493,7 +493,8 @@ let confirmDelivered = async(uid, id) => {
         const staff = await db.Staffs.findOne({
             where: { 
                 restaurantID: bill.restaurantID,
-                userID: uid
+                userID: uid,
+                staffStatus: 1
             }
         })
         if (!staff) return "You can't view this order"

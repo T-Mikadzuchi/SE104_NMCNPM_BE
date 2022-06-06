@@ -42,7 +42,7 @@ let handleGetStaff = async(req, res) => {
             staffs: []
         });
     }
-    let staffs = await staffService.getAllStaff(id);
+    let staffs = await staffService.getAllStaff(uid, id);
     console.log(staffs);
     return res.status(200).json({
         errCode: 0,
@@ -50,9 +50,18 @@ let handleGetStaff = async(req, res) => {
         staffs
     });
 }
+let handleChangeRole = async (req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+
+    let id = req.query.id;
+    let message = await staffService.changeRole(uid, id, req.body);
+    return res.status(200).json(message);
+}
 
 module.exports = {
     handleAddNewStaff: handleAddNewStaff,
     handleUpdateStaffStatus: handleUpdateStaffStatus,
-    handleGetStaff: handleGetStaff
+    handleGetStaff: handleGetStaff,
+    handleChangeRole: handleChangeRole
 }
