@@ -4,10 +4,10 @@ let getAllAddress = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let addresses = '';
-
             addresses = await db.Addresses.findAll({
                 where: {
-                    userID: userId
+                    userID: userId,
+                    default: 0
                 },
                 include: [
                     {
