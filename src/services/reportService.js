@@ -1,4 +1,5 @@
-import db, { sequelize } from "../models/index";
+import db, { Sequelize } from "../models/index";
+import { Op } from 'sequelize';
 
 let getTodayReports = async(uid) => {
     const checkRole = await db.Users.findOne({
@@ -22,6 +23,9 @@ let getTodayReports = async(uid) => {
                 [Op.gte]: new Date(today),
                 [Op.lt]: new Date(tmr)
             }
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
         }
     })
     if (!dailyRpCheck) 
@@ -32,6 +36,9 @@ let getTodayReports = async(uid) => {
         where: {
             year: today.getFullYear(),
             month: today.getMonth() + 1
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
         }
     })
     if (!salesRpCheck)
@@ -43,7 +50,58 @@ let getTodayReports = async(uid) => {
         monthlyReport: salesRpCheck
     }
 }
+let getAllDailyReports = async(uid, data) => {
+    const checkRole = await db.Users.findOne({
+        where: { id: uid }
+    })
+    if (!checkRole) return "no user"
+    if (checkRole.roleID != 0) return "You don't have permission to access"
+    if (!data.month || !data.year) return "Missing required parameter"
+    let dailyReport = await db.DailyReports.findAll({
+        where: {
+            [Op.and]: [
+                Sequelize.where(Sequelize.fn('MONTH', Sequelize.col('date')), data.month),
+                Sequelize.where(Sequelize.fn('YEAR', Sequelize.col('date')), data.year),
+            ],
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        }
+    })
+    let monthlyReport = await db.SalesReports.findOne({
+        where: {
+            year: data.year,
+            month: data.month
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        }
+    })
+    if (!monthlyReport) return "no statistic this period"
+    return {
+        dailyReport,
+        monthlyReport
+    }
+}
+let getAllMonthlyReports = async (uid, data) => {
+    const checkRole = await db.Users.findOne({
+        where: { id: uid }
+    })
+    if (!checkRole) return "no user"
+    if (checkRole.roleID != 0) return "You don't have permission to access"
+    if (!data.year) return "Missing required parameter"
+    return await db.SalesReports.findAll({
+        where: {
+            year: data.year,
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        }
+    })
+}
 
 module.exports = {
-    getTodayReports: getTodayReports
+    getTodayReports: getTodayReports,
+    getAllDailyReports: getAllDailyReports,
+    getAllMonthlyReports: getAllMonthlyReports
 }

@@ -67,7 +67,9 @@ let initWebRoutes = (app) => {
     router.get('/api/get-all-orders', billController.handleGetAllOrders);
 
     router.get('/api/get-today-reports', reportController.handleGetTodayReports);
-
+    router.get('/api/get-all-daily-reports', reportController.handleGetAllDailyReports);
+    router.get('/api/get-all-monthly-reports', reportController.handleGetAllMonthlyReports);
+    
     router.get('/allcode', userController.getAllcode);
 
     return app.use("/", router);
