@@ -1,43 +1,48 @@
 import db from "../models/index";
 
-let getAllRestaurant = (restaurantId) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let restaurants = '';
-            if (restaurantId === "ALL") {
-                restaurants = await db.Restaurants.findAll({
-                    include: [
-                        {
-                            model: db.OpeningHours,                            
-                            as: 'openData',
-
-                        },
-                    ],
-                    raw: true, 
-                    nest: true
-                })
-            } 
-            else if (restaurantId) {
-                restaurants = await db.Restaurants.findOne({
-                    where: { id: restaurantId },
-                                              
-                    include: [
-                        {
-                            model: db.OpeningHours,                            
-                            as: 'openData',
-                        },
-                    ],
-                    raw: true, 
-                    nest: true       
-                })
-            }
-            resolve(restaurants)
-        } catch (e) {
-            reject(e);
-        }
+let getAllRestaurant = async () => {
+    return await db.Restaurants.findAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt', 'openID']
+        },     
+        include: [
+            {
+                model: db.OpeningHours,
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },                        
+                as: 'openData',
+            },
+        ],
+        raw: true, 
+        nest: true
     })
+}
+let getRestaurant = async (id) => {
+    let restaurant = await db.Restaurants.findOne({
+        where: {
+            id: id
+        },
+        attributes: {
+            exclude: ['createdAt', 'updatedAt', 'openID']
+        },     
+        include: [
+            {
+                model: db.OpeningHours,
+                attributes: {
+                    exclude: ['createdAt', 'updatedAt']
+                },                        
+                as: 'openData',
+            },
+        ],
+        raw: true, 
+        nest: true
+    })
+    if (!restaurant) return "no restaurant found"
+    return restaurant
 }
 
 module.exports = {
-    getAllRestaurant: getAllRestaurant
+    getAllRestaurant: getAllRestaurant,
+    getRestaurant: getRestaurant
 }
