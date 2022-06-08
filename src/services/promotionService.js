@@ -1,8 +1,13 @@
 import { Op, QueryTypes } from 'sequelize';
 import db, { Sequelize, sequelize } from "../models/index";
 
-let addNewPromotion = async (data) => {
+let addNewPromotion = async (uid, data) => {
         try {
+            const checkRole = await db.Users.findOne({
+                where: { id: uid }
+            })
+            if (!checkRole) return "no user"
+            if (checkRole.roleID != 0) return "You don't have permission to access"
             if (!data.promotionName || !data.begin || !data.end || !data.value) {
                 return({
                     errCode: 2,
