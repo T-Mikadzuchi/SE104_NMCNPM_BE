@@ -1,7 +1,27 @@
 import promotionService from "../services/promotionService"
+import admin from '../config/firebase-config'
+
+let extractUID = async (idToken) => {
+    try {
+        let decodeValue = await admin.auth().verifyIdToken(idToken);
+        if (decodeValue) {
+            console.log(decodeValue)
+            return decodeValue.uid;
+        }
+        console.log("Unauthorize")
+        return null;
+    } catch (error) {
+        console.log('Internal error')
+        console.log(error)
+        return null;
+    }
+}
 
 let handleAddPromotion = async(req, res) => {
-    let message = await promotionService.addNewPromotion(req.body);
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+
+    let message = await promotionService.addNewPromotion(uid, req.body);
     console.log(message);
     return res.status(200).json(message);
 }

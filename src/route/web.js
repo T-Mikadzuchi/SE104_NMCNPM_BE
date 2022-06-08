@@ -7,6 +7,7 @@ import billController from "../controllers/billController";
 import addressController from "../controllers/addressController";
 import restaurantController from "../controllers/restaurantController";
 import promotionController from "../controllers/promotionController";
+import reportController from "../controllers/reportController";
 
 let router = express.Router();
 
@@ -45,6 +46,7 @@ let initWebRoutes = (app) => {
     router.delete('/api/delete-address', addressController.handleDeleteAddress);
     router.put('/api/update-address', addressController.handleUpdateAddress);
 
+    router.get('/api/get-all-restaurants', restaurantController.handleGetAllRestaurant);
     router.get('/api/get-restaurant', restaurantController.handleGetRestaurant);
 
     router.post('/api/add-promotion', promotionController.handleAddPromotion);
@@ -63,6 +65,8 @@ let initWebRoutes = (app) => {
     router.put('/api/cancel-order', billController.handleCancelOrder);
     router.put('/api/confirm-delivered', billController.handleConfirmDelivered);
     router.get('/api/get-all-orders', billController.handleGetAllOrders);
+
+    router.get('/api/get-today-reports', reportController.handleGetTodayReports);
 
     router.get('/allcode', userController.getAllcode);
 
