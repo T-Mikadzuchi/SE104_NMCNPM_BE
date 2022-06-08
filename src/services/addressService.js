@@ -4,10 +4,10 @@ let getAllAddress = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
             let addresses = '';
-
             addresses = await db.Addresses.findAll({
                 where: {
-                    userID: userId
+                    userID: userId,
+                    default: 0
                 },
                 include: [
                     {
@@ -42,7 +42,8 @@ let addNewAddress = (uid, data) => {
                     detail: data.detail,
                     province: data.province,
                     district: data.district,
-                    ward: data.ward
+                    ward: data.ward,
+                    default: 0
                 }
             });
             if (checkAddress) {
@@ -86,6 +87,11 @@ let deleteAddress = async(id, uid) => {
                 errCode: 1,
                 errMessage: "Address not exists or not belong to this user"
             }
+        } 
+        if (checkAddress.default == 1)             
+        return {
+            errCode: 2,
+            errMessage: "Can't delete default address"
         }
         await db.Addresses.destroy({
             where: {id: id}
