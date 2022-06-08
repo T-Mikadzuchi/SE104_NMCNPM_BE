@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
     promotionName: DataTypes.STRING,
     begin: DataTypes.DATE,
     end: DataTypes.DATE,
-    value: DataTypes.FLOAT
+    value: DataTypes.FLOAT,
+    banner: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'Promotions',

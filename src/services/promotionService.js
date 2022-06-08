@@ -55,7 +55,8 @@ let addNewPromotion = async (uid, data) => {
                     promotionName: data.promotionName,
                     begin: data.begin,
                     end: data.end,
-                    value: data.value / 100
+                    value: data.value / 100,
+                    banner: data.banner
                 })                      
             return({
                 errCode: 0,
