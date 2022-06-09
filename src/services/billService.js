@@ -104,10 +104,12 @@ let displayCart = async(userId) => {
 
     let date = new Date()
     let promotionCheck = await db.Promotions.findOne({
+        where: {
         [Op.and]: [
             sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),
             sequelize.where(sequelize.fn('date', sequelize.col('end')), '>=', date)
         ]
+        }
     })   
     console.log(promotionCheck);
     let promotion = 0;
@@ -240,11 +242,14 @@ let deleteCartItem = async (uid, data) => {
 }
 let purchase = async(uid, data) => {
     if (!uid || !data.restaurantID || !data.payment || !data.phoneNumber || !data.address
-        || !data.province || !data.district || !data.ward) 
-        return { 
-            errCode: 1,
-            errMessage: "Missing required parameters"
+        || !data.province || !data.district || !data.ward) {
+            console.log ("Missing required parameters") 
+            return { 
+                errCode: 1,
+                errMessage: "Missing required parameters"
+            }
         }
+
     const cart = await db.Bills.findOne({
         where: {
             userID: uid,
@@ -345,7 +350,7 @@ let purchase = async(uid, data) => {
         raw: true, 
         nest: true
     })
-    console.log('done')
+    console.log('purchase succeeded')
     return {
         subtotal: subtotal,
         discount: discount,
@@ -560,7 +565,12 @@ let getAllOrders = async(userID) => {
     })
     if (!user) return "User's not exist"
     let bills = await db.Bills.findAll({
-        where: { userID: userID }
+        where: {
+            userID: userID,
+            [Op.not] : {
+                billstatus : 0
+            }
+        }
     })
     return bills;
 }
