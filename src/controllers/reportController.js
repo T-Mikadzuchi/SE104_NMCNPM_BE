@@ -26,14 +26,52 @@ let handleGetTodayReports = async (req, res) => {
             errMessage: "Missing required parameters!"
         });
     }
-    let rp = await reportService.getTodayReports(uid);
+    let report = await reportService.getTodayReports(uid);
     return res.status(200).json({
         errCode: 0,
         errMessage: "OK",
-        rp
+        report
+    });
+}
+let handleGetAllDailyReports = async (req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+
+    let data = req.body;
+    if (!uid) {
+        return res.status(200).json({
+            errCode: 1,
+            errMessage: "Missing required parameters!"
+        });
+    }
+    let report = await reportService.getAllDailyReports(uid, data);
+    return res.status(200).json({
+        errCode: 0,
+        errMessage: "OK",
+        report
+    });
+}
+let handleGetAllMonthlyReports = async (req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+
+    let data = req.body;
+    if (!uid) {
+        return res.status(200).json({
+            errCode: 1,
+            errMessage: "Missing required parameters!"
+        });
+    }
+    let report = await reportService.getAllMonthlyReports(uid, data);
+    return res.status(200).json({
+        errCode: 0,
+        errMessage: "OK",
+        report
     });
 }
 
 module.exports = {
-    handleGetTodayReports: handleGetTodayReports
+    handleGetTodayReports: handleGetTodayReports,
+    handleGetAllDailyReports: handleGetAllDailyReports,
+    handleGetAllMonthlyReports: handleGetAllMonthlyReports
 }
