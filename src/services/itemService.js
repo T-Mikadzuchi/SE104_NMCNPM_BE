@@ -98,6 +98,9 @@ let getAllItem = (itemID) => {
             let items = '';
             if (itemID === "ALL") {
                 items = await db.Items.findAll({
+                    where: {
+                        available: 1
+                    },
                     attributes: {
                         exclude: ['createdAt', 'updatedAt']
                     },                           

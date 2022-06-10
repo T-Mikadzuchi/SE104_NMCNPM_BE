@@ -321,6 +321,7 @@ let purchase = async(uid, data) => {
         billstatus: 1,
         restaurantID: data.restaurantID, 
         date: date,
+        name: data.name,
         payment: data.payment,
         deliPhoneNum: data.phoneNumber,
         deliAddress: data.address,
