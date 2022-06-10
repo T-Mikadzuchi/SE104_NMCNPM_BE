@@ -416,7 +416,9 @@ let displayOrderItems = async(uid, billID) => {
         },
         include: [{
             model: db.Items,
-            attributes: ['itemName']
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
         }],
         raw: true,
         nest: true
