@@ -17,6 +17,9 @@ module.exports = {
       dailyRpID: {
         type: Sequelize.INTEGER
       },
+      name: {
+        type: Sequelize.STRING
+      },
       date: {
         type: Sequelize.DATE
       },
