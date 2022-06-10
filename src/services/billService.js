@@ -406,7 +406,7 @@ let displayOrderItems = async(uid, billID) => {
                 staffStatus: 1
             }
         })
-        if (!staff) return "You can't view this order"
+        if (!staff && order.userID != uid) return "You can't view this order"
     }
     
     let orderItems = await db.BillDetails.findAll({
@@ -474,7 +474,7 @@ let cancelOrder = async (uid, id, data) => {
         })
         if (!staff) return "You can't view this order"
     }
-    if (bill.billstatus == 0 || bill.billstatus > 2) return "You can't cancel this"
+    if (bill.billstatus == 0 || bill.billstatus >= 2) return "You can't cancel this"
     await db.Bills.update({
         billstatus: 4,
         note: data.note
@@ -575,6 +575,14 @@ let getAllOrders = async(userID) => {
     })
     return bills;
 }
+let getAllExistedOrders = async(userID) => {
+    const checkRole = await db.Users.findOne({
+        where: { id: userID }
+    })
+    if (!checkRole) return "no user"
+    if (checkRole.roleID != 0) return "You don't have permission to access"
+    return await db.Bills.findAll()
+}
 
 module.exports = {
     createBill: createBill,
@@ -589,4 +597,5 @@ module.exports = {
     cancelOrder: cancelOrder,
     confirmDelivered: confirmDelivered,
     getAllOrders: getAllOrders,
+    getAllExistedOrders: getAllExistedOrders,
 }
