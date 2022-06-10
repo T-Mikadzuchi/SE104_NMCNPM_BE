@@ -54,8 +54,7 @@ let handleChangeRole = async (req, res) => {
     let idToken = req.headers.authorization.split(' ')[1];
     let uid = await extractUID(idToken);
 
-    let id = req.query.id;
-    let message = await staffService.changeRole(uid, id, req.body);
+    let message = await staffService.changeRole(uid, req.body);
     return res.status(200).json(message);
 }
 
