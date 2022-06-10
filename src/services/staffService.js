@@ -175,16 +175,16 @@ let getAllStaff = (uid, staffId) => {
     })
 }
 
-let changeRole = async (uid, id, data) => {
+let changeRole = async (uid, data) => {
     const checkRole = await db.Users.findOne({
         where: { id: uid }
     })
     if (!checkRole) return "no user"
     if (checkRole.roleID != 0) return "You don't have permission to access"
-    if (!id || !uid || !data.roleID) return "Missing required parameter"
-    if (uid == id) return "You can't demote yourself"
+    if (!data.id || !uid || !data.roleID) return "Missing required parameter"
+    if (uid == data.id) return "You can't demote yourself"
     const staff = await db.Staffs.findOne({
-        where: { userID: id }
+        where: { userID: data.id }
     })
     if (!staff) return "no staff"
     await db.Users.update({

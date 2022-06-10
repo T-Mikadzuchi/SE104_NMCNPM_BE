@@ -69,6 +69,7 @@ let updateItem = (uid, data) => {
             if (item) {
                 await db.Items.update({
                     itemName: data.itemName,
+                    type: data.type,
                     price: data.price,
                     itemImage: data.itemImage,
                     available: data.available,
