@@ -52,6 +52,8 @@ let initWebRoutes = (app) => {
     router.post('/api/add-promotion', promotionController.handleAddPromotion);
     router.get('/api/get-promotion', promotionController.handleGetPromotion);
     router.get('/api/get-current-promotion', promotionController.handleGetCurrentPromotion);
+    router.delete('/api/delete-promotion', promotionController.handleDeletePromotion);
+    router.put('/api/update-promotion', promotionController.handleUpdatePromotion);
 
     router.post('/api/create-bill', billController.handleCreateBill);
     router.post('/api/add-item-to-cart', billController.handleAddItemToCart);
