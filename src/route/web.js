@@ -65,6 +65,7 @@ let initWebRoutes = (app) => {
     router.put('/api/cancel-order', billController.handleCancelOrder);
     router.put('/api/confirm-delivered', billController.handleConfirmDelivered);
     router.get('/api/get-all-orders', billController.handleGetAllOrders);
+    router.get('/api/get-all-existed-orders', billController.handleGetAllExistedOrders);
 
     router.get('/api/get-today-reports', reportController.handleGetTodayReports);
     router.get('/api/get-all-daily-reports', reportController.handleGetAllDailyReports);
