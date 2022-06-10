@@ -373,7 +373,7 @@ let displayOrder = async(userID) => {
         errCode: 1,
         errMessage: "You don't have permission to access"
     }
-    const staff = await db.staff.findOne({
+    const staff = await db.Staffs.findOne({
         where: {
             userID: userID,
             staffStatus: 1
