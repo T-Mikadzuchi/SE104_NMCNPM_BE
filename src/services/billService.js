@@ -549,7 +549,6 @@ let confirmDelivered = async(uid, id) => {
     }
     await db.Bills.update({
         billstatus: 3,
-        date: date,
         dailyRpID: dailyRpCheck.id
     }, {where: { id: id }})
     await db.DailyReports.increment({
