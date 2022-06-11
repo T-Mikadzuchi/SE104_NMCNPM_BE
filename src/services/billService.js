@@ -439,7 +439,7 @@ let confirmOrder = async(uid, billID) => {
     if (user.roleID != 2) {
         const staff = await db.Staffs.findOne({
             where: { 
-                restaurantID: order.restaurantID,
+                restaurantID: bill.restaurantID,
                 userID: uid,
                 staffStatus: 1
             }
@@ -549,7 +549,6 @@ let confirmDelivered = async(uid, id) => {
     }
     await db.Bills.update({
         billstatus: 3,
-        date: date,
         dailyRpID: dailyRpCheck.id
     }, {where: { id: id }})
     await db.DailyReports.increment({
