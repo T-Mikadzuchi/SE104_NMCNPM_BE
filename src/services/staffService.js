@@ -129,27 +129,26 @@ let getAllStaff = async (uid) => {
         errMessage: "You don't have permission to access"
     }) 
     return await db.Staffs.findAll({
-            include: [
-                {
-                    model: db.Users,    
-                },
-            ],
-            include: [
-                {
-                    model: db.Restaurants,     
-                    attribute: ['resAddress']                           
-                },
-            ],
-            include: [ 
-                {
-                    model: db.Allcodes,                            
-                    as: 'staffstatusData',
-                    where: { type: 'staffstatus' },
-                    attributes: ['value']
-                }
-            ],
-            raw: true, 
-            nest: true
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },   
+        include: [ 
+            {
+                model: db.Allcodes,                            
+                as: 'staffstatusData',
+                where: { type: 'staffstatus' },  
+            },
+            {
+                model: db.Restaurants,  
+                attributes: ['resAddress']                   
+            },
+            {
+                model: db.Users,    
+                attributes: ['name', 'email', 'phoneNumber']
+            },
+        ],
+        raw: true, 
+        nest: true
         })
     }
 
