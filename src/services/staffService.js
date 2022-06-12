@@ -136,7 +136,6 @@ let getAllStaff = (uid, staffId) => {
                     include: [
                         {
                             model: db.Users,    
-                            attribute: ['email', 'name']                            
                         },
                     ],
                     include: [
@@ -144,6 +143,14 @@ let getAllStaff = (uid, staffId) => {
                             model: db.Restaurants,     
                             attribute: ['resAddress']                           
                         },
+                    ],
+                    include: [ 
+                        {
+                            model: db.Allcodes,                            
+                            as: 'staffstatusData',
+                            where: { type: 'staffstatus' },
+                            attributes: ['value']
+                        }
                     ],
                     raw: true, 
                     nest: true
@@ -155,7 +162,6 @@ let getAllStaff = (uid, staffId) => {
                     include: [
                         {
                             model: db.Users,    
-                            attribute: ['email', 'name']                            
                         },
                     ],
                     include: [
@@ -163,6 +169,14 @@ let getAllStaff = (uid, staffId) => {
                             model: db.Restaurants,     
                             attribute: ['resAddress']                           
                         },
+                    ],
+                    include: [ 
+                        {
+                            model: db.Allcodes,                            
+                            as: 'staffstatusData',
+                            where: { type: 'staffstatus' },
+                            attributes: ['value']
+                        }
                     ],
                     raw: true, 
                     nest: true       
