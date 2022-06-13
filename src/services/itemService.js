@@ -305,7 +305,7 @@ let deleteItem = async(uid, id) => {
         })
         if (item) {
             await db.Items.update({
-                available: data.available,
+                available: 0
             }, { where: { id: data.id }})
             return({
                 errCode: 0,
