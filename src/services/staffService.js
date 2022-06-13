@@ -92,6 +92,11 @@ let updateStaffStatus = (uid, id, data) => {
                 where: { id: id }
             })
             if (staff) {
+                if (staff.userID == uid) 
+                resolve({
+                    errCode: 5,
+                    errMessage: "You can't change your status!"
+                })
                 await db.Staffs.update({
                     staffStatus: data.staffStatus
                 }, { where: { id: id }})
