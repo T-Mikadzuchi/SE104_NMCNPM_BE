@@ -582,7 +582,13 @@ let getAllExistedOrders = async(userID) => {
     })
     if (!checkRole) return "no user"
     if (checkRole.roleID != 0) return "You don't have permission to access"
-    return await db.Bills.findAll()
+    return await db.Bills.findAll({
+        where: {
+            [Op.not]: {
+                billstatus: 0
+            }
+        }
+    })
 }
 
 module.exports = {

@@ -73,7 +73,7 @@ let handleDeletePromotion = async(req, res) => {
 let handleUpdatePromotion = async(req, res) => {
     let idToken = req.headers.authorization.split(' ')[1];
     let uid = await extractUID(idToken);
-    let data = req.body;
+    let id = req.body.id;
     if (!id || !uid) {
         return res.status(200).json({
             errCode: 1,
@@ -81,7 +81,7 @@ let handleUpdatePromotion = async(req, res) => {
             promotions: []
         });
     }
-    let promotion = await promotionService.updatePromotion(uid, data);
+    let promotion = await promotionService.updatePromotion(uid, id);
     return res.status(200).json({
         errCode: 0,
         errMessage: "OK",
