@@ -142,7 +142,7 @@ let getAllStaff = async (uid) => {
                 model: db.Allcodes,                            
                 as: 'staffstatusData',
                 where: { type: 'staffstatus' }, 
-                attributes: ['value', 'key'] 
+                attributes: ['value'] 
             },
             {
                 model: db.Restaurants,  
@@ -150,7 +150,15 @@ let getAllStaff = async (uid) => {
             },
             {
                 model: db.Users,    
-                attributes: ['name', 'email', 'phoneNumber', 'roleID']
+                attributes: ['name', 'email', 'phoneNumber', 'roleID'],
+                include: [ 
+                    {
+                        model: db.Allcodes,                            
+                        as: 'roleData',
+                        where: { type: 'roleID' }, 
+                        attributes: ['value', 'key'] 
+                    }
+                ],
             },
         ],
         raw: true, 
