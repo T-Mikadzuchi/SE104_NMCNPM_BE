@@ -92,6 +92,11 @@ let updateStaffStatus = (uid, id, data) => {
                 where: { id: id }
             })
             if (staff) {
+                if (staff.userID == uid) 
+                resolve({
+                    errCode: 5,
+                    errMessage: "You can't change your status!"
+                })
                 await db.Staffs.update({
                     staffStatus: data.staffStatus
                 }, { where: { id: id }})
@@ -136,7 +141,8 @@ let getAllStaff = async (uid) => {
             {
                 model: db.Allcodes,                            
                 as: 'staffstatusData',
-                where: { type: 'staffstatus' },  
+                where: { type: 'staffstatus' }, 
+                attributes: ['value', 'key'] 
             },
             {
                 model: db.Restaurants,  
@@ -144,7 +150,7 @@ let getAllStaff = async (uid) => {
             },
             {
                 model: db.Users,    
-                attributes: ['name', 'email', 'phoneNumber']
+                attributes: ['name', 'email', 'phoneNumber', 'roleID']
             },
         ],
         raw: true, 
