@@ -14,11 +14,11 @@ let addNewPromotion = async (uid, data) => {
                 errMessage: 'Missing required parameters!'
             });
         }
-        if (isNaN(data.begin) || isNaN(data.end))
-        return({
-            errCode: 3,
-            errMessage: "Date invalid"
-        })
+        // if (isNaN(data.begin) || isNaN(data.end))
+        // return({
+        //     errCode: 3,
+        //     errMessage: "Date invalid"
+        // })
         if (data.begin >= data.end) 
         return({
             errCode: 4,
