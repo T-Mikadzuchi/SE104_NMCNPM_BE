@@ -87,11 +87,21 @@ let handleGetFeaturedItem = async (req, res) => {
     });
 }
 
+let handleDeleteItem = async (req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+
+    let id = req.query.id;
+    let message = await itemService.deleteItem(uid, id);
+    return res.status(200).json(message);
+}
+
 module.exports = {
     handleSearchItem: handleSearchItem,
     handleUpdateItem: handleUpdateItem,
     handleGetItem: handleGetItem,
     handleGetItemSortByType: handleGetItemSortByType,
     handleAddItem: handleAddItem,
-    handleGetFeaturedItem: handleGetFeaturedItem
+    handleGetFeaturedItem: handleGetFeaturedItem,
+    handleDeleteItem: handleDeleteItem
 }

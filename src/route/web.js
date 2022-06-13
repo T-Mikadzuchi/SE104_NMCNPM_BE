@@ -40,6 +40,7 @@ let initWebRoutes = (app) => {
     router.get('/api/get-item-sort-by-type', itemController.handleGetItemSortByType);
     router.post('/api/add-item', itemController.handleAddItem);
     router.get('/api/get-featured-item', itemController.handleGetFeaturedItem);
+    router.put('/api/delete-item', itemController.handleDeleteItem);
 
     router.get('/api/get-address', addressController.handleGetAddress);
     router.post('/api/add-address', addressController.handleAddAddress);
