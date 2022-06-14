@@ -32,10 +32,11 @@ let getTodayReports = async(uid) => {
         dailyRpCheck = {
             message: "no statistic today"
         }
+    let td = new Date(today);
     let salesRpCheck = await db.SalesReports.findOne({
         where: {
-            year: today.getFullYear(),
-            month: today.getMonth() + 1
+            year: td.getFullYear(),
+            month: td.getMonth() + 1
         },
         attributes: {
             exclude: ['createdAt', 'updatedAt']
