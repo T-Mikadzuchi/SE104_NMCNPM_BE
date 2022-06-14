@@ -169,7 +169,7 @@ let updatePromotion = async(uid, data) => {
                     },
                 }
             });
-            if (checkPromotion.length && checkPromotion.id != data.id) {
+            if (checkPromotion && checkPromotion.id != data.id) {
                 return({
                     errCode: 1,
                     errMessage: 'Promotion exists during the input time!',
