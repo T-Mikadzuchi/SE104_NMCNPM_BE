@@ -42,12 +42,16 @@ let addNewStaff = (uid, data) => {
                     where: { email: data.email }
                 })
                 let staff = await db.Staffs.findOne({
-                    where: { userID: user.id }
+                    where: {
+                        userID: user.id,
+                        staffStatus: 1 
+                    }
                 })
                 if (staff) resolve({
                     errCode: 2,
                     errMessage: "Staff exists"
                 })
+                else
                 await db.Staffs.create({
                     userID: user.id,
                     restaurantID: data.restaurantID,
@@ -62,7 +66,7 @@ let addNewStaff = (uid, data) => {
                     errMessage: 'OK'
                 })
             }
-        }catch (e) {
+        } catch (e) {
             reject(e);
         }
     })
@@ -97,6 +101,12 @@ let updateStaffStatus = (uid, id, data) => {
                     errCode: 5,
                     errMessage: "You can't change your status!"
                 })
+                if (staff.staffStatus == 0) 
+                resolve({
+                    errCode: 6,
+                    errMessage: "Can't update retired staff!"
+                })
+                else
                 await db.Staffs.update({
                     staffStatus: data.staffStatus
                 }, { where: { id: id }})
