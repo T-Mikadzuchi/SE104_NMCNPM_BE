@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   DailyReports.init({
     reportID: DataTypes.INTEGER,
     date: DataTypes.DATE,
-    revenue: DataTypes.BIGINT,
+    revenue: DataTypes.FLOAT,
     billCount: DataTypes.INTEGER,
   }, {
     sequelize,

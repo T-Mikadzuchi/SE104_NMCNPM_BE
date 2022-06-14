@@ -1,4 +1,5 @@
 import db, { sequelize } from "../models/index";
+import { Op, QueryTypes } from 'sequelize';
 
 let searchItem = (itemSearch) => {
     return new Promise(async (resolve, reject) => {
@@ -37,7 +38,36 @@ let searchItem = (itemSearch) => {
                     nest: true
                 })
             }
-            resolve(items)
+            var m = new Date();
+            var dateString =
+            m.getFullYear() + "/" +
+            ("0" + (m.getMonth()+1)).slice(-2) + "/" +
+            ("0" + m.getDate()).slice(-2) + " " +
+            ("0" + m.getHours()).slice(-2) + ":" +
+            ("0" + m.getMinutes()).slice(-2) + ":" +
+            ("0" + m.getSeconds()).slice(-2);
+            let date = new Date(dateString)
+            let promotionCheck = await db.Promotions.findOne({
+                where: {
+                    [Op.and]: [
+                        sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),
+                        sequelize.where(sequelize.fn('date', sequelize.col('end')), '>=', date)
+                    ]
+                }
+            })   
+        
+            let promotion = 0;
+            if (promotionCheck)
+                promotion = promotionCheck.value;
+            let itemList = [];
+            for await (let item of items) {
+                item.price = Number((item.price).toFixed(2));
+                itemList.push({
+                    item: item,
+                    pricePromo: Number((item.price * (1 - promotion)).toFixed(2)) 
+                })
+            } 
+            resolve(itemList)
         } catch {
             reject(e)
         }
@@ -152,7 +182,36 @@ let getAllItem = (itemID) => {
                     nest: true       
                 })
             }
-            resolve(items)
+            var m = new Date();
+            var dateString =
+            m.getFullYear() + "/" +
+            ("0" + (m.getMonth()+1)).slice(-2) + "/" +
+            ("0" + m.getDate()).slice(-2) + " " +
+            ("0" + m.getHours()).slice(-2) + ":" +
+            ("0" + m.getMinutes()).slice(-2) + ":" +
+            ("0" + m.getSeconds()).slice(-2);
+            let date = new Date(dateString)
+            let promotionCheck = await db.Promotions.findOne({
+                where: {
+                    [Op.and]: [
+                        sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),
+                        sequelize.where(sequelize.fn('date', sequelize.col('end')), '>=', date)
+                    ]
+                }
+            })   
+        
+            let promotion = 0;
+            if (promotionCheck)
+                promotion = promotionCheck.value;
+            let itemList = [];
+            for await (let item of items) {
+                item.price = Number((item.price).toFixed(2));
+                itemList.push({
+                    item: item,
+                    pricePromo: Number((item.price * (1 - promotion)).toFixed(2)) 
+                })
+            } 
+            resolve(itemList)
         } catch (e) {
             reject(e);
         }
@@ -249,8 +308,8 @@ let addNewItem = async (uid, data) => {
     }
 
 }
-let getFeaturedItem = () => {
-    let items = db.Items.findAll({
+let getFeaturedItem = async () => {
+    let items = await db.Items.findAll({
         where: { featured: 1 },
         attributes: {
             exclude: ['createdAt', 'updatedAt']
@@ -278,7 +337,36 @@ let getFeaturedItem = () => {
         raw: true, 
         nest: true
     })
-    return items
+    var m = new Date();
+    var dateString =
+    m.getFullYear() + "/" +
+    ("0" + (m.getMonth()+1)).slice(-2) + "/" +
+    ("0" + m.getDate()).slice(-2) + " " +
+    ("0" + m.getHours()).slice(-2) + ":" +
+    ("0" + m.getMinutes()).slice(-2) + ":" +
+    ("0" + m.getSeconds()).slice(-2);
+    let date = new Date(dateString)
+    let promotionCheck = await db.Promotions.findOne({
+        where: {
+            [Op.and]: [
+                sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),
+                sequelize.where(sequelize.fn('date', sequelize.col('end')), '>=', date)
+            ]
+        }
+    })   
+
+    let promotion = 0;
+    if (promotionCheck)
+        promotion = promotionCheck.value;
+    let itemList = [];
+    for await (let item of items) {
+        item.price = Number((item.price).toFixed(2));
+        itemList.push({
+            item: item,
+            pricePromo: Number((item.price * (1 - promotion)).toFixed(2)) 
+        })
+    } 
+    return(itemList)
 }
 let deleteItem = async(uid, id) => {
     try {
