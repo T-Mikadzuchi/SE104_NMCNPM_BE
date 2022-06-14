@@ -6,7 +6,7 @@ let getTodayReports = async(uid) => {
         where: { id: uid }
     })
     if (!checkRole) return "no user"
-    if (checkRole.roleID != 0) return "You don't have permission to access"
+    if (checkRole.roleID == 2) return "You don't have permission to access"
 
     let date = new Date()
     let today = date.getFullYear() + "-" +
@@ -56,7 +56,7 @@ let getAllDailyReports = async(uid, data) => {
         where: { id: uid }
     })
     if (!checkRole) return "no user"
-    if (checkRole.roleID != 0) return "You don't have permission to access"
+    if (checkRole.roleID == 2) return "You don't have permission to access"
     if (!data.month || !data.year) return "Missing required parameter"
     let dailyReport = await db.DailyReports.findAll({
         where: {
@@ -89,7 +89,7 @@ let getAllMonthlyReports = async (uid, data) => {
         where: { id: uid }
     })
     if (!checkRole) return "no user"
-    if (checkRole.roleID != 0) return "You don't have permission to access"
+    if (checkRole.roleID == 2) return "You don't have permission to access"
     if (!data.year) return "Missing required parameter"
     return await db.SalesReports.findAll({
         where: {
