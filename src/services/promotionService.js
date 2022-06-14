@@ -125,9 +125,11 @@ let deletePromotion = async(uid, id) => {
             where: { id : id }
         })
         if (Date.parse(promotion.end) <= Date.now() || 
-        (Date.parse(promotion.begin) <= Date.now() && Date.parse(promotion.end) >= Date.now))
+        (Date.parse(promotion.begin) <= Date.now() && Date.parse(promotion.end) >= Date.now()))
             return "Only delete future promotion!"
-        await db.Promotions.delete()
+        await db.Promotions.destroy({
+            where: { id: id}
+        })
         return "Delete promotion success"
     } catch (e) {
         console.log(e)
@@ -140,13 +142,22 @@ let updatePromotion = async(uid, data) => {
         })
         if (!checkRole) return "no user"
         if (checkRole.roleID != 0) return "You don't have permission to access"
+        console.log(data.id)
         const promotion = await db.Promotions.findOne({
             where: { id : data.id }
         })
+        if (Date.parse(data.begin) < Date.now())
+            return ({
+                errCode: 2,
+                errMessage: 'Only update future promotion!',
+            })
         if (Date.parse(promotion.end) <= Date.now() || 
-        (Date.parse(promotion.begin) <= Date.now() && Date.parse(promotion.end) >= Date.now))
-            return "Only update future promotion!"
-            let checkPromotion = await db.Promotions.findAll({
+        (Date.parse(promotion.begin) <= Date.now() && Date.parse(promotion.end) >= Date.now()))
+        return ({
+            errCode: 2,
+            errMessage: 'Only update future promotion!',
+        })
+            let checkPromotion = await db.Promotions.findOne({
                 where: {
                     [Op.or]: {
                         begin: {
@@ -155,11 +166,10 @@ let updatePromotion = async(uid, data) => {
                         end: {
                             [Op.between]: [data.begin, data.end]
                         }
-                    }
+                    },
                 }
             });
-            console.log(checkPromotion)
-            if (checkPromotion.length !=0) {
+            if (checkPromotion.length && checkPromotion.id != data.id) {
                 return({
                     errCode: 1,
                     errMessage: 'Promotion exists during the input time!',
@@ -172,7 +182,7 @@ let updatePromotion = async(uid, data) => {
                     begin: data.begin,
                     end: data.end,
                     banner: data.banner,
-                    value: data.value
+                    value: data.value / 100
                 }, { where: { id: data.id }})          
             return({
                 errCode: 0,
