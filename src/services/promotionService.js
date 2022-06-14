@@ -119,18 +119,31 @@ let deletePromotion = async(uid, id) => {
         const checkRole = await db.Users.findOne({
             where: { id: uid }
         })
-        if (!checkRole) return "no user"
-        if (checkRole.roleID != 0) return "You don't have permission to access"
+        if (!checkRole) return {
+            errCode: 1,
+            errMessage: "no user"
+        }
+        if (checkRole.roleID != 0)
+        return {
+            errCode: 1,
+            errMessage: "You don't have permission to access"
+        } 
         const promotion = await db.Promotions.findOne({
             where: { id : id }
         })
         if (Date.parse(promotion.end) <= Date.now() || 
         (Date.parse(promotion.begin) <= Date.now() && Date.parse(promotion.end) >= Date.now()))
-            return "Only delete future promotion!"
+        return {
+            errCode: 1,
+            errMessage: "Only delete future promotion!"
+        } 
         await db.Promotions.destroy({
             where: { id: id}
         })
-        return "Delete promotion success"
+        return {
+            errCode: 0,
+            errMessage: "Delete promotion success"
+        } 
     } catch (e) {
         console.log(e)
     }
@@ -140,8 +153,15 @@ let updatePromotion = async(uid, data) => {
         const checkRole = await db.Users.findOne({
             where: { id: uid }
         })
-        if (!checkRole) return "no user"
-        if (checkRole.roleID != 0) return "You don't have permission to access"
+        if (!checkRole) return ({
+            errCode: 3,
+            errMessage: 'no user',
+        })
+        if (checkRole.roleID != 0) 
+        return ({
+            errCode: 3,
+            errMessage: "You don't have permission to access",
+        })
         console.log(data.id)
         const promotion = await db.Promotions.findOne({
             where: { id : data.id }

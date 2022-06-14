@@ -65,8 +65,6 @@ let handleDeletePromotion = async(req, res) => {
     }
     let promotion = await promotionService.deletePromotion(uid, id);
     return res.status(200).json({
-        errCode: 0,
-        errMessage: "OK",
         promotion
     });
 }
@@ -83,8 +81,6 @@ let handleUpdatePromotion = async(req, res) => {
     }
     let promotion = await promotionService.updatePromotion(uid, id);
     return res.status(200).json({
-        errCode: 0,
-        errMessage: "OK",
         promotion
     });
 }
