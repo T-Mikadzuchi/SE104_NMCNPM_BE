@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false
     },
     number: DataTypes.INTEGER,
-    currentprice: DataTypes.INTEGER
+    currentprice: DataTypes.FLOAT
   }, {
     sequelize,
     modelName: 'BillDetails',

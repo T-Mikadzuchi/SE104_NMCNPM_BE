@@ -15,7 +15,7 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       totalRevenue: {
-        type: Sequelize.BIGINT
+        type: Sequelize.FLOAT
       },
       totalBillCount: {
         type: Sequelize.INTEGER

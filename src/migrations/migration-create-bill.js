@@ -24,10 +24,10 @@ module.exports = {
         type: Sequelize.DATE
       },
       total: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
       },
       ship: {
-        type: Sequelize.INTEGER
+        type: Sequelize.FLOAT
       },
       payment: {
         type: Sequelize.INTEGER

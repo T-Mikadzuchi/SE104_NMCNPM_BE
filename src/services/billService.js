@@ -28,8 +28,8 @@ let createBill = (uid) => {
                     userID: uid,
                     // restaurantID: data.restaurantID,
                     // dailyRpID: dailyRpCheck.id,
-                    total: 20000,
-                    ship: 20000,
+                    total: 1,
+                    ship: 1,
                     billstatus: 0,                    
                 })
                 resolve(bill)
@@ -79,7 +79,7 @@ let addItemToCart = (uid, data) => {
                 itemInCart = await db.BillDetails.create({
                     billID: bill.id,
                     itemID: data.itemID,
-                    currentprice: price * data.number,
+                    currentprice: Number((price * data.number).toFixed(2)),
                     number: data.number
                 })
             }
@@ -131,8 +131,8 @@ let displayCart = async(userId) => {
         cartinfo.push({
             billID: item.billID, 
             number: item.number, 
-            unitPricePromo: product.price * (1 - promotion),
-            totalPricePromo: item.number * product.price * (1 - promotion),
+            unitPricePromo: Number((product.price * (1 - promotion)).toFixed(2)), 
+            totalPricePromo: Number((item.number * product.price * (1 - promotion)).toFixed(2)),
             product: product,
         })        
     }
@@ -182,7 +182,7 @@ let updateCartItem = async (uid, data) => {
         let price = priceCheck.price;
         await db.BillDetails.update({
             number: data.number,
-            currentprice: price * data.number
+            currentprice: Number((price * data.number).toFixed(2)),
         }, { where: {
             billID: bill.id,
             itemID: data.itemID
@@ -301,19 +301,20 @@ let purchase = async(uid, data) => {
         })
         if (promotion != 0) {
             await db.BillDetails.update({
-                currentprice: item.number * product.price * (1 - promotion)
+                currentprice: Number((item.number * product.price * (1 - promotion)).toFixed(2)),
             }, { where: {
                 billID: cart.id,
                 itemID: product.id
             }})
         }
+
         cartItems.push({
             item: product.itemName,
             unitPrice: product.price,
-            unitPricePromo: product.price * (1 - promotion)
+            unitPricePromo: Number((product.price * (1 - promotion)).toFixed(2)),
         });
-        subtotal += item.number * product.price,
-        discount += item.number * product.price * promotion
+        subtotal += Number((item.number * product.price).toFixed(2))
+        discount += Number((item.number * product.price * promotion).toFixed(2))
         await db.Bills.increment({ total: item.currentprice },
              { where: { id: cart.id }})
     }
@@ -353,8 +354,8 @@ let purchase = async(uid, data) => {
     })
     console.log('purchase succeeded')
     return {
-        subtotal: subtotal,
-        discount: discount,
+        subtotal: Number(subtotal.toFixed(2)),
+        discount: Number(discount.toFixed(2)),
         bill: order,
         items: cartItems
     }
@@ -398,7 +399,7 @@ let displayOrderItems = async(uid, billID) => {
     if (user.roleID == 2) {
         if (order.userID != uid) return "You can't view this order"
     } 
-    else {
+    else if (user.roleID == 1) {
         const staff = await db.Staffs.findOne({
             where: { 
                 restaurantID: order.restaurantID,
