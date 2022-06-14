@@ -260,8 +260,8 @@ let purchase = async(uid, data) => {
     var m = new Date();
     let res = await db.Restaurants.findByPk(data.restaurantID);
     let open = await db.OpeningHours.findByPk(res.openID);
-    if (m.getHours() < open.fromHour || (m.getHours == open.fromHour && m.getMinutes < open.fromMin)
-    || m.getHours() > open.toHour || (m.getHours == open.toHour && m.getMinutes > open.toMin))
+    if (m.getHours() < open.fromHour || (m.getHours() == open.fromHour && m.getMinutes() < open.fromMin)
+    || m.getHours() > open.toHour || (m.getHours() == open.toHour && m.getMinutes() > open.toMin))
         return "Restaurant's closed"
     var dateString =
     m.getFullYear() + "/" +
