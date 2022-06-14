@@ -8,7 +8,7 @@ let getTodayReports = async(uid) => {
     if (!checkRole) return "no user"
     if (checkRole.roleID != 0) return "You don't have permission to access"
 
-    let date = new Date(dateString)
+    let date = new Date()
     let today = date.getFullYear() + "-" +
     ("0" + (date.getMonth()+1)).slice(-2) + "-" +
     ("0" + date.getDate()).slice(-2) 
