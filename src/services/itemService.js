@@ -195,61 +195,59 @@ let getItemSortByType = (data) => {
     return items
 }
 
-let addNewItem = (uid, data) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const admin = await db.Users.findOne({
-                where: { 
-                    id: uid, 
-                    roleID: 0
-                }
-            })
-            if (!admin) resolve ({
-                errCode: 1,
-                errMessage: "You don't have permission to access"
-            })
-            if (!data.itemName || !data.type || !data.itemImage || !data.price || !data.calories || (data.featured != 0 && data.featured != 1)) {
-                resolve({
-                    errCode: 2,
-                    errMessage: 'Missing required parameters!'
-                });
+let addNewItem = async (uid, data) => {
+    try {
+        const admin = await db.Users.findOne({
+            where: { 
+                id: uid, 
+                roleID: 0
             }
-            let checkItem = await db.Items.findAll({
-                where: {                    
-                    itemName: data.itemName,
-                    type: data.type,
-                    itemImage: data.itemImage,
-			        price: data.price, 
-                    available: 1,
-			        calories: data.calories,
-			        featured: data.featured
-                }
-            });
-            if (checkItem.length !=0) {
-                resolve({
-                    errCode: 3,
-                    errMessage: 'Item exist!'
-                });
-            }
-                let newItem = await db.Items.create({                    
-                    itemName: data.itemName,
-                    type: data.type,
-                    itemImage: data.itemImage,
-			        price: data.price, 
-			        calories: data.calories,
-			        featured: data.featured
-                })                           
-            
-            resolve({
-                errCode: 0,
-                errMessage: 'Item added successfully!',
-                newItem
+        })
+        if (!admin) return ({
+            errCode: 1,
+            errMessage: "You don't have permission to access"
+        })
+        if (!data.itemName || (!data.type && (data.type < 0 || data.type > 6)) || !data.itemImage || !data.price || !data.calories || (data.featured !== 0 && data.featured !== 1)) {
+            return({
+                errCode: 2,
+                errMessage: 'Missing required parameters!'
             });
         }
-        catch (e) {
-            reject (e);
+        let checkItem = await db.Items.findAll({
+            where: {                    
+                itemName: data.itemName,
+                type: data.type,
+                price: data.price, 
+                calories: data.calories,
+                featured: data.featured
+            }
+        });
+        if (checkItem.length !=0) {
+            return({
+                errCode: 3,
+                errMessage: 'Item exist!'
+            });
         }
-    })
+            let newItem = await db.Items.create({                    
+                itemName: data.itemName,
+                type: data.type,
+                itemImage: data.itemImage,
+                price: data.price, 
+                calories: data.calories,
+                featured: data.featured,
+                available: 1
+            })                           
+        
+            return({
+            errCode: 0,
+            errMessage: 'Item added successfully!',
+            newItem
+        });
+    }
+    catch (e) {
+        reject (e);
+    }
+
 }
 let getFeaturedItem = () => {
     let items = db.Items.findAll({
@@ -282,6 +280,45 @@ let getFeaturedItem = () => {
     })
     return items
 }
+let deleteItem = async(uid, id) => {
+    try {
+        const admin = await db.Users.findOne({
+            where: { 
+                id: uid, 
+                roleID: 0
+            }
+        })
+        if (!admin) return ({
+            errCode: 1,
+            errMessage: "You don't have permission to access"
+        })
+        if (!id) {
+            return({
+                errCode: 2,
+                errMessage: 'Missing required parameters'
+            })
+        }
+        let item = await db.Items.findOne({
+            where: { id: id }
+        })
+        if (item) {
+            await db.Items.update({
+                available: 0
+            }, { where: { id: id }})
+            return({
+                errCode: 0,
+                errMessage: "Item deleted from client successfully!"
+            })
+        } else {
+            return({
+                errCode: 3,
+                errMessage: "Item's not found!"
+            });
+        }
+    } catch (e) {
+        console.log(e)
+    }
+}
 
 module.exports = {
     searchItem: searchItem,
@@ -289,5 +326,6 @@ module.exports = {
     getAllItem: getAllItem,
     getItemSortByType: getItemSortByType,
     addNewItem: addNewItem,
-    getFeaturedItem: getFeaturedItem
+    getFeaturedItem: getFeaturedItem,
+    deleteItem: deleteItem
 }

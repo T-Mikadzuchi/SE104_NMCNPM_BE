@@ -92,6 +92,11 @@ let updateStaffStatus = (uid, id, data) => {
                 where: { id: id }
             })
             if (staff) {
+                if (staff.userID == uid) 
+                resolve({
+                    errCode: 5,
+                    errMessage: "You can't change your status!"
+                })
                 await db.Staffs.update({
                     staffStatus: data.staffStatus
                 }, { where: { id: id }})
@@ -116,64 +121,50 @@ let updateStaffStatus = (uid, id, data) => {
     })
 }
 
-let getAllStaff = (uid, staffId) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const checkRole = await db.Users.findOne({
-                where: { id: uid }
-            })
-            if (!checkRole) resolve({
-                errCode: 3,
-                errMessage: 'No user'
-            })
-            if (checkRole.roleID != 0) resolve({
-                errCode: 4,
-                errMessage: "You don't have permission to access"
-            }) 
-            let staffs = '';
-            if (staffId === "ALL") {
-                staffs = await db.Staffs.findAll({
-                    include: [
-                        {
-                            model: db.Users,    
-                            attribute: ['email', 'name']                            
-                        },
-                    ],
-                    include: [
-                        {
-                            model: db.Restaurants,     
-                            attribute: ['resAddress']                           
-                        },
-                    ],
-                    raw: true, 
-                    nest: true
-                })
-            } 
-            else if (staffId) {
-                staffs = await db.Staffs.findOne({
-                    where: { id: staffId },
-                    include: [
-                        {
-                            model: db.Users,    
-                            attribute: ['email', 'name']                            
-                        },
-                    ],
-                    include: [
-                        {
-                            model: db.Restaurants,     
-                            attribute: ['resAddress']                           
-                        },
-                    ],
-                    raw: true, 
-                    nest: true       
-                })
-            }
-            resolve(staffs)
-        } catch (e) {
-            reject(e);
-        }
+let getAllStaff = async (uid) => {
+    const checkRole = await db.Users.findOne({
+        where: { id: uid }
     })
-}
+    if (!checkRole) return({
+        errCode: 1,
+        errMessage: 'No user'
+    })
+    if (checkRole.roleID != 0) return({
+        errCode: 2,
+        errMessage: "You don't have permission to access"
+    }) 
+    return await db.Staffs.findAll({
+        attributes: {
+            exclude: ['createdAt', 'updatedAt']
+        },   
+        include: [ 
+            {
+                model: db.Allcodes,                            
+                as: 'staffstatusData',
+                where: { type: 'staffstatus' }, 
+                attributes: ['value'] 
+            },
+            {
+                model: db.Restaurants,  
+                attributes: ['resAddress']                   
+            },
+            {
+                model: db.Users,    
+                attributes: ['name', 'email', 'phoneNumber', 'roleID'],
+                include: [ 
+                    {
+                        model: db.Allcodes,                            
+                        as: 'roleData',
+                        where: { type: 'roleID' }, 
+                        attributes: ['value', 'key'] 
+                    }
+                ],
+            },
+        ],
+        raw: true, 
+        nest: true
+        })
+    }
 
 let changeRole = async (uid, data) => {
     const checkRole = await db.Users.findOne({

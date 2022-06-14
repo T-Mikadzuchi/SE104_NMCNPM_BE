@@ -52,9 +52,47 @@ let handleGetCurrentPromotion = async(req, res) => {
         promotions
     });
 }
+let handleDeletePromotion = async(req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+    let id = req.body.id;
+    if (!id || !uid) {
+        return res.status(200).json({
+            errCode: 1,
+            errMessage: "Missing required parameters!",
+            promotions: []
+        });
+    }
+    let promotion = await promotionService.deletePromotion(uid, id);
+    return res.status(200).json({
+        errCode: 0,
+        errMessage: "OK",
+        promotion
+    });
+}
+let handleUpdatePromotion = async(req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+    let id = req.body.id;
+    if (!id || !uid) {
+        return res.status(200).json({
+            errCode: 1,
+            errMessage: "Missing required parameters!",
+            promotions: []
+        });
+    }
+    let promotion = await promotionService.updatePromotion(uid, id);
+    return res.status(200).json({
+        errCode: 0,
+        errMessage: "OK",
+        promotion
+    });
+}
 
 module.exports = {
     handleAddPromotion: handleAddPromotion,
     handleGetPromotion: handleGetPromotion,
-    handleGetCurrentPromotion: handleGetCurrentPromotion
+    handleGetCurrentPromotion: handleGetCurrentPromotion,
+    handleDeletePromotion: handleDeletePromotion,
+    handleUpdatePromotion: handleUpdatePromotion
 }

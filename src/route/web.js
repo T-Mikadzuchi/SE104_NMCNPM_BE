@@ -40,6 +40,7 @@ let initWebRoutes = (app) => {
     router.get('/api/get-item-sort-by-type', itemController.handleGetItemSortByType);
     router.post('/api/add-item', itemController.handleAddItem);
     router.get('/api/get-featured-item', itemController.handleGetFeaturedItem);
+    router.put('/api/delete-item', itemController.handleDeleteItem);
 
     router.get('/api/get-address', addressController.handleGetAddress);
     router.post('/api/add-address', addressController.handleAddAddress);
@@ -52,6 +53,8 @@ let initWebRoutes = (app) => {
     router.post('/api/add-promotion', promotionController.handleAddPromotion);
     router.get('/api/get-promotion', promotionController.handleGetPromotion);
     router.get('/api/get-current-promotion', promotionController.handleGetCurrentPromotion);
+    router.delete('/api/delete-promotion', promotionController.handleDeletePromotion);
+    router.put('/api/update-promotion', promotionController.handleUpdatePromotion);
 
     router.post('/api/create-bill', billController.handleCreateBill);
     router.post('/api/add-item-to-cart', billController.handleAddItemToCart);
@@ -65,6 +68,7 @@ let initWebRoutes = (app) => {
     router.put('/api/cancel-order', billController.handleCancelOrder);
     router.put('/api/confirm-delivered', billController.handleConfirmDelivered);
     router.get('/api/get-all-orders', billController.handleGetAllOrders);
+    router.get('/api/get-all-existed-orders', billController.handleGetAllExistedOrders);
 
     router.get('/api/get-today-reports', reportController.handleGetTodayReports);
     router.get('/api/get-all-daily-reports', reportController.handleGetAllDailyReports);

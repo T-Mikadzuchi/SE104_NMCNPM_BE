@@ -321,6 +321,7 @@ let purchase = async(uid, data) => {
         billstatus: 1,
         restaurantID: data.restaurantID, 
         date: date,
+        name: data.name,
         payment: data.payment,
         deliPhoneNum: data.phoneNumber,
         deliAddress: data.address,
@@ -372,7 +373,7 @@ let displayOrder = async(userID) => {
         errCode: 1,
         errMessage: "You don't have permission to access"
     }
-    const staff = await db.staff.findOne({
+    const staff = await db.Staffs.findOne({
         where: {
             userID: userID,
             staffStatus: 1
@@ -405,7 +406,7 @@ let displayOrderItems = async(uid, billID) => {
                 staffStatus: 1
             }
         })
-        if (!staff) return "You can't view this order"
+        if (!staff && order.userID != uid) return "You can't view this order"
     }
     
     let orderItems = await db.BillDetails.findAll({
@@ -415,7 +416,9 @@ let displayOrderItems = async(uid, billID) => {
         },
         include: [{
             model: db.Items,
-            attributes: ['itemName']
+            attributes: {
+                exclude: ['createdAt', 'updatedAt']
+            },
         }],
         raw: true,
         nest: true
@@ -436,7 +439,7 @@ let confirmOrder = async(uid, billID) => {
     if (user.roleID != 2) {
         const staff = await db.Staffs.findOne({
             where: { 
-                restaurantID: order.restaurantID,
+                restaurantID: bill.restaurantID,
                 userID: uid,
                 staffStatus: 1
             }
@@ -473,7 +476,7 @@ let cancelOrder = async (uid, id, data) => {
         })
         if (!staff) return "You can't view this order"
     }
-    if (bill.billstatus == 0 || bill.billstatus > 2) return "You can't cancel this"
+    if (bill.billstatus == 0 || bill.billstatus >= 2) return "You can't cancel this"
     await db.Bills.update({
         billstatus: 4,
         note: data.note
@@ -546,7 +549,6 @@ let confirmDelivered = async(uid, id) => {
     }
     await db.Bills.update({
         billstatus: 3,
-        date: date,
         dailyRpID: dailyRpCheck.id
     }, {where: { id: id }})
     await db.DailyReports.increment({
@@ -574,6 +576,20 @@ let getAllOrders = async(userID) => {
     })
     return bills;
 }
+let getAllExistedOrders = async(userID) => {
+    const checkRole = await db.Users.findOne({
+        where: { id: userID }
+    })
+    if (!checkRole) return "no user"
+    if (checkRole.roleID != 0) return "You don't have permission to access"
+    return await db.Bills.findAll({
+        where: {
+            [Op.not]: {
+                billstatus: 0
+            }
+        }
+    })
+}
 
 module.exports = {
     createBill: createBill,
@@ -588,4 +604,5 @@ module.exports = {
     cancelOrder: cancelOrder,
     confirmDelivered: confirmDelivered,
     getAllOrders: getAllOrders,
+    getAllExistedOrders: getAllExistedOrders,
 }

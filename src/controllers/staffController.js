@@ -34,16 +34,15 @@ let handleUpdateStaffStatus = async(req, res) => {
 let handleGetStaff = async(req, res) => {
     let idToken = req.headers.authorization.split(' ')[1];
     let uid = await extractUID(idToken);
-    let id = req.query.id;
-    if (!id) {
+
+    if (!uid) {
         return res.status(200).json({
             errCode: 1,
             errMessage: "Missing required parameters!",
             staffs: []
         });
     }
-    let staffs = await staffService.getAllStaff(uid, id);
-    console.log(staffs);
+    let staffs = await staffService.getAllStaff(uid);
     return res.status(200).json({
         errCode: 0,
         errMessage: "OK",

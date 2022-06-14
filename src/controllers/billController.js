@@ -149,6 +149,24 @@ let handleGetAllOrders = async(req, res) => {
         orders
     });
 }
+let handleGetAllExistedOrders = async(req, res) => {
+    let idToken = req.headers.authorization.split(' ')[1];
+    let uid = await extractUID(idToken);
+    if (!uid) {
+        return res.status(200).json({
+            errCode: 1,
+            errMessage: "Missing required parameters!",
+            orders: []
+        });
+    }
+    let orders = await billService.getAllExistedOrders(uid);
+    console.log(orders);
+    return res.status(200).json({
+        errCode: 0,
+        errMessage: "OK",
+        orders
+    });
+}
 
 module.exports = {
     handleCreateBill: handleCreateBill,
@@ -162,5 +180,6 @@ module.exports = {
     handleConfirmOrder: handleConfirmOrder,
     handleCancelOrder: handleCancelOrder,
     handleConfirmDelivered: handleConfirmDelivered,
-    handleGetAllOrders: handleGetAllOrders
+    handleGetAllOrders: handleGetAllOrders,
+    handleGetAllExistedOrders: handleGetAllExistedOrders
 }
