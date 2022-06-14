@@ -354,8 +354,8 @@ let purchase = async(uid, data) => {
     })
     console.log('purchase succeeded')
     return {
-        subtotal: subtotal,
-        discount: discount,
+        subtotal: Number(subtotal.toFixed(2)),
+        discount: Number(discount.toFixed(2)),
         bill: order,
         items: cartItems
     }
@@ -399,7 +399,7 @@ let displayOrderItems = async(uid, billID) => {
     if (user.roleID == 2) {
         if (order.userID != uid) return "You can't view this order"
     } 
-    else {
+    else if (user.roleID == 1) {
         const staff = await db.Staffs.findOne({
             where: { 
                 restaurantID: order.restaurantID,

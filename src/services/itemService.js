@@ -62,12 +62,12 @@ let searchItem = (itemSearch) => {
             let itemList = [];
             for await (let item of items) {
                 item.price = Number((item.price).toFixed(2));
+                item.pricePromo = Number((item.price * (1 - promotion)).toFixed(2)) 
                 itemList.push({
-                    item: item,
-                    pricePromo: Number((item.price * (1 - promotion)).toFixed(2)) 
+                    item
                 })
             } 
-            resolve(itemList)
+            resolve(items)
         } catch {
             reject(e)
         }
@@ -206,12 +206,12 @@ let getAllItem = (itemID) => {
             let itemList = [];
             for await (let item of items) {
                 item.price = Number((item.price).toFixed(2));
+                item.pricePromo = Number((item.price * (1 - promotion)).toFixed(2)) 
                 itemList.push({
-                    item: item,
-                    pricePromo: Number((item.price * (1 - promotion)).toFixed(2)) 
+                    item
                 })
             } 
-            resolve(itemList)
+            resolve(items)
         } catch (e) {
             reject(e);
         }
@@ -362,11 +362,10 @@ let getFeaturedItem = async () => {
     for await (let item of items) {
         item.price = Number((item.price).toFixed(2));
         itemList.push({
-            item: item,
-            pricePromo: Number((item.price * (1 - promotion)).toFixed(2)) 
+            item
         })
     } 
-    return(itemList)
+    return(items)
 }
 let deleteItem = async(uid, id) => {
     try {
