@@ -37,7 +37,7 @@ let handleGetAllDailyReports = async (req, res) => {
     let idToken = req.headers.authorization.split(' ')[1];
     let uid = await extractUID(idToken);
 
-    let data = req.body;
+    let data = req.query;
     if (!uid) {
         return res.status(200).json({
             errCode: 1,
