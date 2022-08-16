@@ -18,8 +18,12 @@ initWebRoutes(app);
 
 connectDB();
 
-let port = process.env.PORT || 8081;
-app.listen(port, () => {
-    //callback
-    console.log("Backend Nodejs is running on the port: " + port)
-})
+// let port = process.env.PORT || 8081;
+// app.listen(port, () => {
+//     //callback
+//     console.log("Backend Nodejs is running on the port: " + port)
+// })
+const PORT = process.env.PORT || 8081;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});
