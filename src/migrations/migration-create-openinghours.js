@@ -1,36 +1,36 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('OpeningHours', {
-        id: {
+    await queryInterface.createTable("OpeningHours", {
+      id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       fromHour: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       fromMin: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       toHour: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       toMin: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('OpeningHours');
-  }
+    await queryInterface.dropTable("OpeningHours");
+  },
 };

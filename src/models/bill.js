@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Bills extends Model {
     /**
@@ -11,33 +9,48 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Bills.belongsTo(models.Allcodes, { foreignKey: 'payment', targetKey: 'key' , as: 'paymentData' })
-      Bills.belongsTo(models.Allcodes, { foreignKey: 'billstatus', targetKey: 'key' , as: 'billstatusData' })
+      Bills.belongsTo(models.Allcodes, {
+        foreignKey: "payment",
+        targetKey: "key",
+        as: "paymentData",
+      });
+      Bills.belongsTo(models.Allcodes, {
+        foreignKey: "billstatus",
+        targetKey: "key",
+        as: "billstatusData",
+      });
       Bills.belongsTo(models.Users);
       Bills.belongsTo(models.Restaurants);
-      Bills.belongsTo(models.DailyReports, { foreignKey: 'dailyRpID', targetKey: 'id' , as: 'dailyRpData' });
-      Bills.hasMany(models.BillDetails, { foreignKey: 'billID' });
+      Bills.belongsTo(models.DailyReports, {
+        foreignKey: "dailyRpID",
+        targetKey: "id",
+        as: "dailyRpData",
+      });
+      Bills.hasMany(models.BillDetails, { foreignKey: "billID" });
     }
-  };
-  Bills.init({
-    userID: DataTypes.STRING,
-    restaurantID: DataTypes.INTEGER,
-    dailyRpID: DataTypes.INTEGER,
-    name: DataTypes.STRING,
-    date: DataTypes.DATE,
-    total: DataTypes.FLOAT,
-    ship: DataTypes.FLOAT,
-    payment: DataTypes.INTEGER,
-    billstatus: DataTypes.INTEGER,
-    deliPhoneNum: DataTypes.STRING,
-    deliAddress: DataTypes.STRING,
-    deliProvince: DataTypes.STRING,
-    deliDistrict: DataTypes.STRING, 
-    deliWard: DataTypes.STRING,
-    note: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Bills',
-  });
+  }
+  Bills.init(
+    {
+      userID: DataTypes.STRING,
+      restaurantID: DataTypes.INTEGER,
+      dailyRpID: DataTypes.INTEGER,
+      name: DataTypes.STRING,
+      date: DataTypes.DATE,
+      total: DataTypes.FLOAT,
+      ship: DataTypes.FLOAT,
+      payment: DataTypes.INTEGER,
+      billstatus: DataTypes.INTEGER,
+      deliPhoneNum: DataTypes.STRING,
+      deliAddress: DataTypes.STRING,
+      deliProvince: DataTypes.STRING,
+      deliDistrict: DataTypes.STRING,
+      deliWard: DataTypes.STRING,
+      note: DataTypes.STRING,
+    },
+    {
+      sequelize,
+      modelName: "Bills",
+    }
+  );
   return Bills;
 };

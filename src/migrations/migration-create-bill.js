@@ -1,69 +1,69 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Bills', {
+    await queryInterface.createTable("Bills", {
       id: {
         allowNull: false,
         autoIncrement: true,
-        primaryKey: true,      
-        type: Sequelize.INTEGER
+        primaryKey: true,
+        type: Sequelize.INTEGER,
       },
       userID: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       restaurantID: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       dailyRpID: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       name: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       date: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       total: {
-        type: Sequelize.FLOAT
+        type: Sequelize.FLOAT,
       },
       ship: {
-        type: Sequelize.FLOAT
+        type: Sequelize.FLOAT,
       },
       payment: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       billstatus: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       deliPhoneNum: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       deliAddress: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       deliProvince: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       deliDistrict: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       deliWard: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       note: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Bills');
-  }
+    await queryInterface.dropTable("Bills");
+  },
 };
