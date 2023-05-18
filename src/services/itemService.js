@@ -47,16 +47,16 @@ let searchItem = (itemSearch) => {
             ("0" + m.getMinutes()).slice(-2) + ":" +
             ("0" + m.getSeconds()).slice(-2);
             let date = new Date(dateString)
-            let promotion = 0
-            let promotionCheck = null
-            let promotions = await db.Promotions.findAll()
-            for await (let promo of promotions) {
-                if (date >= promo.begin && date <= promo.end) {
-                    promotionCheck = promo
-                    break;
+            let promotionCheck = await db.Promotions.findOne({
+                where: {
+                    [Op.and]: [
+                        sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),
+                        sequelize.where(sequelize.fn('date', sequelize.col('end')), '>=', date)
+                    ]
                 }
-            }
+            })   
         
+            let promotion = 0;
             if (promotionCheck)
                 promotion = promotionCheck.value;
             let itemList = [];
@@ -191,16 +191,16 @@ let getAllItem = (itemID) => {
             ("0" + m.getMinutes()).slice(-2) + ":" +
             ("0" + m.getSeconds()).slice(-2);
             let date = new Date(dateString)
-            let promotion = 0
-            let promotionCheck = null
-            let promotions = await db.Promotions.findAll()
-            for await (let promo of promotions) {
-                if (date >= promo.begin && date <= promo.end) {
-                    promotionCheck = promo
-                    break;
+            let promotionCheck = await db.Promotions.findOne({
+                where: {
+                    [Op.and]: [
+                        sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),
+                        sequelize.where(sequelize.fn('date', sequelize.col('end')), '>=', date)
+                    ]
                 }
-            }
+            })   
         
+            let promotion = 0;
             if (promotionCheck)
                 promotion = promotionCheck.value;
             let itemList = [];
@@ -346,16 +346,16 @@ let getFeaturedItem = async () => {
     ("0" + m.getMinutes()).slice(-2) + ":" +
     ("0" + m.getSeconds()).slice(-2);
     let date = new Date(dateString)
-    let promotion = 0
-    let promotionCheck = null
-    let promotions = await db.Promotions.findAll()
-    for await (let promo of promotions) {
-        if (date >= promo.begin && date <= promo.end) {
-            promotionCheck = promo
-            break;
+    let promotionCheck = await db.Promotions.findOne({
+        where: {
+            [Op.and]: [
+                sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),
+                sequelize.where(sequelize.fn('date', sequelize.col('end')), '>=', date)
+            ]
         }
-    }
+    })   
 
+    let promotion = 0;
     if (promotionCheck)
         promotion = promotionCheck.value;
     let itemList = [];

@@ -88,8 +88,6 @@ let getAllPromotion = (promotionId) => {
                     nest: true       
                 })
             }
-            console.log(promotions)
-            console.log(new Date())
             resolve(promotions)
         } catch (e) {
             reject(e);
@@ -105,23 +103,14 @@ let getCurrentPromotion = async() => {
     ("0" + m.getMinutes()).slice(-2) + ":" +
     ("0" + m.getSeconds()).slice(-2);
     let date = new Date(dateString)
-    // let promotion = await db.Promotions.findOne({
-    //     where: {
-    //         [Op.and]: [
-    //             sequelize.where(sequelize.fn('timestamp', sequelize.col('begin')), '<=', date),
-    //             sequelize.where(sequelize.fn('timestamp', sequelize.col('end')), '>=', date)
-    //         ]
-    //     }
-    // })   
-    let promotion = null
-    let promotions = await db.Promotions.findAll()
-    for await (let promo of promotions) {
-        if (date >= promo.begin && date <= promo.end) {
-            promotion = promo
-            break;
+    let promotion = await db.Promotions.findOne({
+        where: {
+            [Op.and]: [
+                sequelize.where(sequelize.fn('date', sequelize.col('begin')), '<=', date),
+                sequelize.where(sequelize.fn('date', sequelize.col('end')), '>=', date)
+            ]
         }
-    }
-    console.log('hrere')
+    })   
     console.log(promotion)
     return promotion
 } 
