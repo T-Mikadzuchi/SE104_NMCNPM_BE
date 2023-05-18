@@ -1,39 +1,39 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Promotions', {
-        id: {
+    await queryInterface.createTable("Promotions", {
+      id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       promotionName: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       begin: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       end: {
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       value: {
-        type: Sequelize.FLOAT
+        type: Sequelize.FLOAT,
       },
       banner: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable('Promotions');
-  }
+    await queryInterface.dropTable("Promotions");
+  },
 };

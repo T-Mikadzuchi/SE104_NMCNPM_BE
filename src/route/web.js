@@ -12,71 +12,101 @@ import reportController from "../controllers/reportController";
 let router = express.Router();
 
 let initWebRoutes = (app) => {
-    router.get('/', homeController.getHomePage);
-    // router.get('/crud', homeController.getCRUD);
-    // router.post('/post-crud', homeController.postCRUD);
-    // router.get('/get-crud', homeController.displayGetCRUD);
-    // router.get('/edit-crud', homeController.getEditCRUD);
-    // router.post('/put-crud', homeController.putCRUD);
-    // router.get('/delete-crud', homeController.deleteCRUD);
+  router.get("/", homeController.getHomePage);
+  // router.get('/crud', homeController.getCRUD);
+  // router.post('/post-crud', homeController.postCRUD);
+  // router.get('/get-crud', homeController.displayGetCRUD);
+  // router.get('/edit-crud', homeController.getEditCRUD);
+  // router.post('/put-crud', homeController.putCRUD);
+  // router.get('/delete-crud', homeController.deleteCRUD);
 
-    // router.post('/api/login', userController.handleLogin);
-    router.get('/api/get-user', userController.handleGetUserProfile);
-    router.post('/api/create-new-user', userController.handleCreateNewUser);
-    router.put('/api/edit-user', userController.handleEditUser);
-    //router.delete('/api/delete-user', userController.handleDeleteUser);
-    // router.put('/api/change-password', userController.handleChangePassword);
-    router.get('/api/get-all-users', userController.handleGetAllUsers);
-    router.get('/api/search-users', userController.handleSearchUsersByEmail);
+  // router.post('/api/login', userController.handleLogin);
+  router.get("/api/get-user", userController.handleGetUserProfile);
+  router.post("/api/create-new-user", userController.handleCreateNewUser);
+  router.put("/api/edit-user", userController.handleEditUser);
+  //router.delete('/api/delete-user', userController.handleDeleteUser);
+  // router.put('/api/change-password', userController.handleChangePassword);
+  router.get("/api/get-all-users", userController.handleGetAllUsers);
+  router.get("/api/search-users", userController.handleSearchUsersByEmail);
 
-    router.post('/api/add-new-staff', staffController.handleAddNewStaff);
-    router.put('/api/update-staff-status', staffController.handleUpdateStaffStatus);
-    router.get('/api/get-staff', staffController.handleGetStaff);
-    router.put('/api/change-role', staffController.handleChangeRole);
+  router.post("/api/add-new-staff", staffController.handleAddNewStaff);
+  router.put(
+    "/api/update-staff-status",
+    staffController.handleUpdateStaffStatus
+  );
+  router.get("/api/get-staff", staffController.handleGetStaff);
+  router.put("/api/change-role", staffController.handleChangeRole);
 
-    router.get('/api/search-item', itemController.handleSearchItem);
-    router.put('/api/update-item', itemController.handleUpdateItem);
-    router.get('/api/get-item', itemController.handleGetItem);
-    router.get('/api/get-item-sort-by-type', itemController.handleGetItemSortByType);
-    router.post('/api/add-item', itemController.handleAddItem);
-    router.get('/api/get-featured-item', itemController.handleGetFeaturedItem);
-    router.put('/api/delete-item', itemController.handleDeleteItem);
+  router.get("/api/search-item", itemController.handleSearchItem);
+  router.put("/api/update-item", itemController.handleUpdateItem);
+  router.get("/api/get-item", itemController.handleGetItem);
+  router.get(
+    "/api/get-item-sort-by-type",
+    itemController.handleGetItemSortByType
+  );
+  router.post("/api/add-item", itemController.handleAddItem);
+  router.get("/api/get-featured-item", itemController.handleGetFeaturedItem);
+  router.put("/api/delete-item", itemController.handleDeleteItem);
 
-    router.get('/api/get-address', addressController.handleGetAddress);
-    router.post('/api/add-address', addressController.handleAddAddress);
-    router.delete('/api/delete-address', addressController.handleDeleteAddress);
-    router.put('/api/update-address', addressController.handleUpdateAddress);
+  router.get("/api/get-address", addressController.handleGetAddress);
+  router.post("/api/add-address", addressController.handleAddAddress);
+  router.delete("/api/delete-address", addressController.handleDeleteAddress);
+  router.put("/api/update-address", addressController.handleUpdateAddress);
 
-    router.get('/api/get-all-restaurants', restaurantController.handleGetAllRestaurant);
-    router.get('/api/get-restaurant', restaurantController.handleGetRestaurant);
+  router.get(
+    "/api/get-all-restaurants",
+    restaurantController.handleGetAllRestaurant
+  );
+  router.get("/api/get-restaurant", restaurantController.handleGetRestaurant);
 
-    router.post('/api/add-promotion', promotionController.handleAddPromotion);
-    router.get('/api/get-promotion', promotionController.handleGetPromotion);
-    router.get('/api/get-current-promotion', promotionController.handleGetCurrentPromotion);
-    router.delete('/api/delete-promotion', promotionController.handleDeletePromotion);
-    router.put('/api/update-promotion', promotionController.handleUpdatePromotion);
+  router.post("/api/add-promotion", promotionController.handleAddPromotion);
+  router.get("/api/get-promotion", promotionController.handleGetPromotion);
+  router.get(
+    "/api/get-current-promotion",
+    promotionController.handleGetCurrentPromotion
+  );
+  router.delete(
+    "/api/delete-promotion",
+    promotionController.handleDeletePromotion
+  );
+  router.put(
+    "/api/update-promotion",
+    promotionController.handleUpdatePromotion
+  );
 
-    router.post('/api/create-bill', billController.handleCreateBill);
-    router.post('/api/add-item-to-cart', billController.handleAddItemToCart);
-    router.get('/api/display-cart', billController.handleDisplayCart);
-    router.put('/api/update-cart-item', billController.handleUpdateCartItem);
-    router.delete('/api/delete-cart-item', billController.handleDeleteCartItem);
-    router.put('/api/purchase', billController.handlePurchase);
-    router.get('/api/display-order', billController.handleDisplayOrder);
-    router.get('/api/display-order-items', billController.handleDisplayOrderItems);
-    router.put('/api/confirm-order', billController.handleConfirmOrder);
-    router.put('/api/cancel-order', billController.handleCancelOrder);
-    router.put('/api/confirm-delivered', billController.handleConfirmDelivered);
-    router.get('/api/get-all-orders', billController.handleGetAllOrders);
-    router.get('/api/get-all-existed-orders', billController.handleGetAllExistedOrders);
+  router.post("/api/create-bill", billController.handleCreateBill);
+  router.post("/api/add-item-to-cart", billController.handleAddItemToCart);
+  router.get("/api/display-cart", billController.handleDisplayCart);
+  router.put("/api/update-cart-item", billController.handleUpdateCartItem);
+  router.delete("/api/delete-cart-item", billController.handleDeleteCartItem);
+  router.put("/api/purchase", billController.handlePurchase);
+  router.get("/api/display-order", billController.handleDisplayOrder);
+  router.get(
+    "/api/display-order-items",
+    billController.handleDisplayOrderItems
+  );
+  router.put("/api/confirm-order", billController.handleConfirmOrder);
+  router.put("/api/cancel-order", billController.handleCancelOrder);
+  router.put("/api/confirm-delivered", billController.handleConfirmDelivered);
+  router.get("/api/get-all-orders", billController.handleGetAllOrders);
+  router.get(
+    "/api/get-all-existed-orders",
+    billController.handleGetAllExistedOrders
+  );
 
-    router.get('/api/get-today-reports', reportController.handleGetTodayReports);
-    router.get('/api/get-all-daily-reports', reportController.handleGetAllDailyReports);
-    router.get('/api/get-all-monthly-reports', reportController.handleGetAllMonthlyReports);
-    
-    router.get('/allcode', userController.getAllcode);
+  router.get("/api/get-today-reports", reportController.handleGetTodayReports);
+  router.get(
+    "/api/get-all-daily-reports",
+    reportController.handleGetAllDailyReports
+  );
+  router.get(
+    "/api/get-all-monthly-reports",
+    reportController.handleGetAllMonthlyReports
+  );
 
-    return app.use("/", router);
-}
+  router.get("/allcode", userController.getAllcode);
+
+  return app.use("/", router);
+};
 
 module.exports = initWebRoutes;

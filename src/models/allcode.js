@@ -1,8 +1,6 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-import Users from '../models/user';
+"use strict";
+const { Model } = require("sequelize");
+import Users from "../models/user";
 
 module.exports = (sequelize, DataTypes) => {
   class Allcodes extends Model {
@@ -13,23 +11,41 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Allcodes.hasMany(models.Users, { foreignKey: 'roleID', as: 'roleData' })
-      Allcodes.hasMany(models.Staffs, { foreignKey: 'staffstatus', as: 'staffstatusData' })
-      Allcodes.hasMany(models.Items, { foreignKey: 'type', as: 'typeData' })
-      Allcodes.hasMany(models.Items, { foreignKey: 'available', as: 'availableData' })
-      Allcodes.hasMany(models.Items, { foreignKey: 'featured', as: 'featuredData' })
-      Allcodes.hasMany(models.Bills, { foreignKey: 'payment', as: 'paymentData' })
-      Allcodes.hasMany(models.Bills, { foreignKey: 'billstatus', as: 'billstatusData' })
+      Allcodes.hasMany(models.Users, { foreignKey: "roleID", as: "roleData" });
+      Allcodes.hasMany(models.Staffs, {
+        foreignKey: "staffstatus",
+        as: "staffstatusData",
+      });
+      Allcodes.hasMany(models.Items, { foreignKey: "type", as: "typeData" });
+      Allcodes.hasMany(models.Items, {
+        foreignKey: "available",
+        as: "availableData",
+      });
+      Allcodes.hasMany(models.Items, {
+        foreignKey: "featured",
+        as: "featuredData",
+      });
+      Allcodes.hasMany(models.Bills, {
+        foreignKey: "payment",
+        as: "paymentData",
+      });
+      Allcodes.hasMany(models.Bills, {
+        foreignKey: "billstatus",
+        as: "billstatusData",
+      });
     }
-  };
-  Allcodes.init({
-    key: DataTypes.INTEGER,
-    type: DataTypes.STRING,
-    value: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Allcodes',
-  });
-  
+  }
+  Allcodes.init(
+    {
+      key: DataTypes.INTEGER,
+      type: DataTypes.STRING,
+      value: DataTypes.STRING,
+    },
+    {
+      sequelize,
+      modelName: "Allcodes",
+    }
+  );
+
   return Allcodes;
 };

@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class DailyReports extends Model {
     /**
@@ -11,18 +9,28 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      DailyReports.hasMany(models.Bills, { foreignKey: 'dailyRpID', as: 'dailyRpData' });
-      DailyReports.belongsTo(models.SalesReports, { foreignKey: 'reportID', targetKey: 'id', as: 'reportData' });
+      DailyReports.hasMany(models.Bills, {
+        foreignKey: "dailyRpID",
+        as: "dailyRpData",
+      });
+      DailyReports.belongsTo(models.SalesReports, {
+        foreignKey: "reportID",
+        targetKey: "id",
+        as: "reportData",
+      });
     }
-  };
-  DailyReports.init({
-    reportID: DataTypes.INTEGER,
-    date: DataTypes.DATE,
-    revenue: DataTypes.FLOAT,
-    billCount: DataTypes.INTEGER,
-  }, {
-    sequelize,
-    modelName: 'DailyReports',
-  });
+  }
+  DailyReports.init(
+    {
+      reportID: DataTypes.INTEGER,
+      date: DataTypes.DATE,
+      revenue: DataTypes.FLOAT,
+      billCount: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: "DailyReports",
+    }
+  );
   return DailyReports;
 };

@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Items extends Model {
     /**
@@ -11,23 +9,38 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Items.belongsTo(models.Allcodes, { foreignKey: 'type', targetKey: 'key' , as: 'typeData' })
-      Items.belongsTo(models.Allcodes, { foreignKey: 'available', targetKey: 'key' , as: 'availableData' })
-      Items.belongsTo(models.Allcodes, { foreignKey: 'featured', targetKey: 'key' , as: 'featuredData' })
-      Items.hasMany(models.BillDetails, { foreignKey: 'itemID' });
+      Items.belongsTo(models.Allcodes, {
+        foreignKey: "type",
+        targetKey: "key",
+        as: "typeData",
+      });
+      Items.belongsTo(models.Allcodes, {
+        foreignKey: "available",
+        targetKey: "key",
+        as: "availableData",
+      });
+      Items.belongsTo(models.Allcodes, {
+        foreignKey: "featured",
+        targetKey: "key",
+        as: "featuredData",
+      });
+      Items.hasMany(models.BillDetails, { foreignKey: "itemID" });
     }
-  };
-  Items.init({
-    itemName: DataTypes.STRING,
-    type: DataTypes.INTEGER,
-    itemImage: DataTypes.STRING,
-    price: DataTypes.FLOAT,
-    available: DataTypes.INTEGER,
-    calories: DataTypes.FLOAT,
-    featured: DataTypes.INTEGER,
-  }, {
-    sequelize,
-    modelName: 'Items',
-  });
+  }
+  Items.init(
+    {
+      itemName: DataTypes.STRING,
+      type: DataTypes.INTEGER,
+      itemImage: DataTypes.STRING,
+      price: DataTypes.FLOAT,
+      available: DataTypes.INTEGER,
+      calories: DataTypes.FLOAT,
+      featured: DataTypes.INTEGER,
+    },
+    {
+      sequelize,
+      modelName: "Items",
+    }
+  );
   return Items;
 };
